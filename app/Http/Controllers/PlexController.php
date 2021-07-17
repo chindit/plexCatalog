@@ -4,22 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\MessageBag;
 use Spatie\Browsershot\Browsershot;
 use Symfony\Component\HttpFoundation\Cookie as SfCookie;
 
-class PlexController
+class PlexController extends Controller
 {
     public function listcatalogs(Request $request)
     {
         $request->validate([
-            'serverAddress' => 'required|url',
-            'serverToken' => 'required|string'
+            'serverAddress' => 'required|string',
+            'serverToken' => 'required|string',
+            'serverPort' => 'int',
         ]);
 
-        $catalogRequest = Http::get($request->get('serverAddress') . ':32400/library/sections?X-Plex-Token=' . $request->get('serverToken'));
+        try {
+            $catalogRequest = Http::get($request->get('serverAddress') . ':' . $request->get('serverPort', 32400) . '/library/sections?X-Plex-Token=' . $request->get('serverToken'));
 
-        if ($catalogRequest->failed()) {
-            throw new \Exception('Unable to reach specific url');
+            if ($catalogRequest->failed()) {
+                throw new \Exception('Unable to reach specific url');
+            }
+        } catch (\Throwable $throwable) {
+            return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
         }
 
         $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
@@ -34,7 +40,8 @@ class PlexController
             ->withCookie(new SfCookie('plex', json_encode(
                 [
                     's' => $request->get('serverAddress'),
-                    't' => $request->get('serverToken')
+                    't' => $request->get('serverToken'),
+                    'p' => $request->get('serverPort', 32400),
                 ],
                 JSON_THROW_ON_ERROR
             )
@@ -53,7 +60,7 @@ class PlexController
         $server = json_decode($request->cookie('plex'), true);
 
         foreach ($request->get('ids') as $id) {
-            $catalogRequest = Http::get($server['s'] . ':32400/library/sections/' . $id . '/all?X-Plex-Token=' . $server['t']);
+            $catalogRequest = Http::get($server['s'] . ':' . $server['p'] . '/library/sections/' . $id . '/all?X-Plex-Token=' . $server['t']);
 
             $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
 
@@ -98,18 +105,23 @@ class PlexController
         $catalog = view('templates/catalog', [
             'server' => $server['s'],
             'token' => $server['t'],
-            'movies' => $movies
+            'movies' => $movies,
+            'truncateDescription' => $request->get('truncateDescription', false) === "true",
         ])->render();
 
-        $fileName = tmpfile() . '.pdf';
-        Browsershot::html($catalog)
-            ->noSandbox()
-            ->format('A4')
-            ->timeout(3000)
-            ->margins(25, 0, 15, 0)
-            ->footerHtml('<div class="pageNumber"></div>')
-            ->save($fileName);
+        try {
+            $fileName = tmpfile() . '.pdf';
+            Browsershot::html($catalog)
+                ->noSandbox()
+                ->format('A4')
+                ->timeout(3000)
+                ->margins(25, 0, 15, 0)
+                ->footerHtml('<div class="pageNumber"></div>')
+                ->save($fileName);
 
-        return response()->download($fileName, 'catalog.pdf');
+            return response()->download($fileName, 'catalog.pdf');
+        } catch (\Throwable $throwable) {
+            return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
+        }
     }
 }

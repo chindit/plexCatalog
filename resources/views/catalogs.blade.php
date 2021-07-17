@@ -34,6 +34,18 @@
             @endforeach
             </tbody>
         </table>
+        <div class="mb-3 mt-5">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="truncateDescription" value="true" id="truncateDescription">
+                <label class="form-check-label" for="truncateDescription">
+                    Truncate description if too big (max height allowed is thumbnail height)
+                </label>
+            </div>
+        </div>
+        <div class="mt-3 mb-3 alert alert-warning">
+            Generation can take up to 5 minutes.  Just be patient.<br>
+            If you do not want to wait, clone the project and run it on your own machine.
+        </div>
         <div class="mb-3">
             <input type="submit" class="btn btn-primary" value="Generate report" />
         </div>

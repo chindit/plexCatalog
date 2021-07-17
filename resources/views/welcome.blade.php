@@ -11,13 +11,19 @@
             </div>
         @endif
         <form method="POST" action="{{ route('catalog')  }}">
-            <div class="mb-3">
-                <label for="serverAddress" class="form-label">Plex server address</label>
-                <input type="url" class="form-control" name="serverAddress" id="serverAddress">
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="serverAddress" class="form-label">Plex server address</label>
+                    <input type="url" class="form-control" name="serverAddress" id="serverAddress" value="{{ old('serverAddress') }}">
+                </div>
+                <div class="col">
+                    <label for="serverPort" class="form-label">Plex port</label>
+                    <input type="number" class="form-control" name="serverPort" id="serverPort" value="32400">
+                </div>
             </div>
             <div class="mb-3">
                 <label for="serverToken" class="form-label">Plex server token</label>
-                <input type="text" class="form-control" name="serverToken" id="serverToken">
+                <input type="text" class="form-control" name="serverToken" id="serverToken" value="{{ old('serverToken') }}">
             </div>
             <div class="mb-3">
                 <input type="submit" class="btn btn-primary" value="Connect" />

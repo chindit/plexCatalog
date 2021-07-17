@@ -18,12 +18,22 @@
         body {
             font-family: 'Ubuntu', sans-serif;
         }
+        .summary {
+            font-size: small;
+        }
+        .ellipsed {
+            height: 118px;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
 <div class="container-fluid ms-5 me-5">
     @foreach($movies as $movie)
-        <div class="row mb-3" style="page-break-inside: avoid">
+        <div class="row mb-3" style="page-break-inside: avoid;">
             <div class="col-sm-3">
                 <img src="{{ $server }}:32400{{ $movie['thumb'] }}?X-Plex-Token={{ $token }}" width="150px" />
             </div>
@@ -40,7 +50,7 @@
                 <div>
                     <em>{{ $movie['actors'] }}</em>
                 </div>
-                <div class="mt-3" style="text-align: justify">
+                <div class="mt-3 summary @if($truncateDescription) ellipsed @endif" style="text-align: justify;">
                     {{ $movie['summary'] }}
                 </div>
             </div>
