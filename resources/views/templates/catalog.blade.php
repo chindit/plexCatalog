@@ -35,7 +35,7 @@
     @foreach($movies as $movie)
         <div class="row mb-3" style="page-break-inside: avoid;">
             <div class="col-sm-3">
-                <img src="{{ $server }}:32400{{ $movie['thumb'] }}?X-Plex-Token={{ $token }}" width="150px" />
+                <img src="{{ $server }}:{{ $port }}{{ $movie['thumb'] }}?X-Plex-Token={{ $token }}" width="150px" />
             </div>
             <div class="col-sm-7">
                 <h3>{{ $movie['title'] }}</h3>

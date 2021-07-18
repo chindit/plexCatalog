@@ -105,6 +105,7 @@ class PlexController extends Controller
         $catalog = view('templates/catalog', [
             'server' => $server['s'],
             'token' => $server['t'],
+            'port' => $server['p'],
             'movies' => $movies,
             'truncateDescription' => $request->get('truncateDescription', false) === "true",
         ])->render();
