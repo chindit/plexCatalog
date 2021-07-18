@@ -93,8 +93,8 @@ class PlexController extends Controller
            else if (str_starts_with($title, 'La ')) {
                $movie['title'] = substr($title, 3) . ' (La)';
            }
-           else if (str_starts_with($title, 'L')) {
-               $movie['title'] = substr($title, 2) . ' (L)';
+           else if (str_starts_with($title, 'L\'')) {
+               $movie['title'] = substr($title, 2) . ' (L\')';
            }
 
            return $movie;
