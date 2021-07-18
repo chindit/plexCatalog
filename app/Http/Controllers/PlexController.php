@@ -97,6 +97,8 @@ class PlexController extends Controller
                $movie['title'] = substr($title, 2) . ' (L\')';
            }
 
+           // Title should start with an uppercase for better sorting
+            $movie['title'] = ucfirst($movie['title']);
            return $movie;
         });
 
