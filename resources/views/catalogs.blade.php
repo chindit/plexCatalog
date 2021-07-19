@@ -13,6 +13,10 @@
         </div>
     @endif
 
+    <div class="alert alert-info">
+        Only Movies and TV Show catalogs are currently supported
+    </div>
+
     <form method="POST" action="{{ route('report') }}">
         <table>
             <thead>

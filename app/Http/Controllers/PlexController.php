@@ -65,7 +65,21 @@ class PlexController extends Controller
 
             $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
 
-            foreach ($xmlResponse->Video as $movie) {
+            $iteratorKey = null;
+            switch ($xmlResponse->attributes()['viewGroup']) {
+                case 'movie':
+                    $iteratorKey = 'Video';
+                    break;
+                case 'show':
+                    $iteratorKey = 'Directory';
+                    break;
+            }
+
+            if (is_null($iteratorKey)) {
+                continue;
+            }
+
+            foreach ($xmlResponse->$iteratorKey as $movie) {
                 $genres = collect();
                 $actors = collect();
                 foreach ($movie->Genre as $genre) {
@@ -78,13 +92,14 @@ class PlexController extends Controller
                     'title' => (string)$movie->attributes()['title'],
                     'summary' => (string)$movie->attributes()['summary'],
                     'thumb' => (string)$movie->attributes()['thumb'],
-                    'duration' => round((int)$movie->attributes()['duration']/60_000, 0),
+                    'duration' => round((int)$movie->attributes()['duration'] / 60_000, 0),
                     'year' => (int)$movie->attributes()['year'],
                     'actors' => $actors->implode(', '),
                     'genres' => $genres->implode(', '),
                 ]);
             }
         }
+
 
         $movies = $movies->map(function(array $movie) {
             // Title should start with an uppercase for better sorting
