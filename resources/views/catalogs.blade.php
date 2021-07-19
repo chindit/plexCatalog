@@ -40,6 +40,12 @@
                     Only render a HTML version
                 </label>
             </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="unwatchedOnly" value="true" id="unwatchedOnly">
+                <label class="form-check-label" for="unwatchedOnly">
+                    Only list unwatched movies/TV shows
+                </label>
+            </div>
         </div>
         <div class="mt-3 mb-3 alert alert-warning">
             Generation can take up to 5 minutes.  Just be patient.<br>
