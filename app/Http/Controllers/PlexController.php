@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\StringUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\MessageBag;
@@ -86,20 +87,9 @@ class PlexController extends Controller
         }
 
         $movies = $movies->map(function(array $movie) {
-           $title = $movie['title'];
-           if (str_starts_with($title, 'Le ')) {
-               $movie['title'] = substr($title, 3) . ' (Le)';
-           }
-           else if (str_starts_with($title, 'La ')) {
-               $movie['title'] = substr($title, 3) . ' (La)';
-           }
-           else if (str_starts_with($title, 'L\'')) {
-               $movie['title'] = substr($title, 2) . ' (L\')';
-           }
-
-           // Title should start with an uppercase for better sorting
-            $movie['title'] = ucfirst($movie['title']);
-           return $movie;
+            // Title should start with an uppercase for better sorting
+            $movie['title'] = ucfirst(StringUtils::stripPrefix($movie['title']));
+            return $movie;
         });
 
         $movies = $movies->sortBy('title');
