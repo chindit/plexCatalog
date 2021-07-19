@@ -18,6 +18,7 @@
         body {
             font-family: 'Ubuntu', sans-serif;
             @if($htmlOnly)
+            margin: auto;
             max-width: 1024px;
             @endif
         }
