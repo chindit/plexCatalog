@@ -115,7 +115,13 @@ class PlexController extends Controller
             'port' => $server['p'],
             'movies' => $movies,
             'truncateDescription' => $request->get('truncateDescription', false) === "true",
+            'htmlOnly' => $request->get('htmlOnly', false) === "true",
         ])->render();
+
+        if ($request->get('htmlOnly', false) === "true")
+        {
+            return $catalog;
+        }
 
         try {
             $fileName = tmpfile() . '.pdf';

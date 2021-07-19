@@ -17,6 +17,9 @@
     <style>
         body {
             font-family: 'Ubuntu', sans-serif;
+            @if($htmlOnly)
+            max-width: 95vw;
+            @endif
         }
         .summary {
             font-size: small;

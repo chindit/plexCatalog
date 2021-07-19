@@ -34,6 +34,12 @@
                     Truncate description if too big (max height allowed is thumbnail height)
                 </label>
             </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="htmlOnly" value="true" id="htmlOnly">
+                <label class="form-check-label" for="htmlOnly">
+                    Only render a HTML version
+                </label>
+            </div>
         </div>
         <div class="mt-3 mb-3 alert alert-warning">
             Generation can take up to 5 minutes.  Just be patient.<br>
