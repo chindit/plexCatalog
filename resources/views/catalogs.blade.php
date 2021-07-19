@@ -17,27 +17,16 @@
         Only Movies and TV Show catalogs are currently supported
     </div>
 
+    <p>Please check catalogs you want to include in your report</p>
     <form method="POST" action="{{ route('report') }}">
-        <table>
-            <thead>
-            <tr>
-                <th>Use</th>
-                <th>Name</th>
-            </tr>
-            </thead>
-            <tbody>
             @foreach($catalogs as $id => $name)
-                <tr>
-                    <td>
-                        <input type="checkbox" name="ids[]" value="{{ $id }}" />
-                    </td>
-                    <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{ $id }}" id="checkbox-{{ $id }}" name="ids[]">
+                    <label class="form-check-label" for="checkbox-{{ $id }}">
                         {{ $name }}
-                    </td>
-                </tr>
+                    </label>
+                </div>
             @endforeach
-            </tbody>
-        </table>
         <div class="mb-3 mt-5">
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" name="truncateDescription" value="true" id="truncateDescription">
