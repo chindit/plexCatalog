@@ -61,7 +61,7 @@ class PlexController extends Controller
         $server = json_decode($request->cookie('plex'), true);
 
         foreach ($request->get('ids') as $id) {
-            $catalogRequest = Http::get($server['s'] . ':' . $server['p'] . '/library/sections/' . $id . '/all?' . (($request->get('unwatchedOnly', false) === "true") ? 'unwatched=1&unwatchedLeaves=1' : '') . 'X-Plex-Token=' . $server['t']);
+            $catalogRequest = Http::get($server['s'] . ':' . $server['p'] . '/library/sections/' . $id . '/all?' . (($request->get('unwatchedOnly', false) === "true") ? 'unwatched=1&unwatchedLeaves=1&' : '') . 'X-Plex-Token=' . $server['t']);
 
             $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
 
