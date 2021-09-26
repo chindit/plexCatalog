@@ -13,7 +13,7 @@ If you are not sure how to find your Plex Token, just
 [have a look here](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
 
 # Online version
-An online version can be found here: https://plex.chindit.eu
+An online version can be found here: https://plex.chindit.be
 
 It's running «as it» and generation can take some time.
 
