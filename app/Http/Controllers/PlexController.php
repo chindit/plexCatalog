@@ -124,7 +124,7 @@ class PlexController extends Controller
         }
 
         try {
-            $fileName = tmpfile() . '.pdf';
+            $fileName = tempnam(sys_get_temp_dir(), 'plex_') . '.pdf';
             Browsershot::html($catalog)
                 ->noSandbox()
                 ->format('A4')
