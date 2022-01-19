@@ -12,9 +12,9 @@
         "ext-curl": "*",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.4.0",
-        "laravel/framework": "^8.74",
-        "laravel/tinker": "^2.6",
+        "guzzlehttp/guzzle": "^7.4.1",
+        "laravel/framework": "^8.80",
+        "laravel/tinker": "^2.7",
         "ext-simplexml": "*",
         "ext-json": "*",
         "spatie/browsershot": "^3.52"
@@ -23,10 +23,10 @@
         "barryvdh/laravel-debugbar": "^3.6",
         "facade/ignition": "^2.17",
         "fakerphp/faker": "^1.17.0",
-        "laravel/sail": "^1.12.9",
+        "laravel/sail": "^1.13.0",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10",
-        "phpunit/phpunit": "^9.5.10"
+        "nunomaduro/collision": "^5.11",
+        "phpunit/phpunit": "^9.5.11"
     },
     "autoload": {
         "psr-4": {
@@ -62,6 +62,6 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
