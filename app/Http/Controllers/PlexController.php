@@ -32,8 +32,8 @@ class PlexController extends Controller
         $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
 
         $catalogs = collect();
-        foreach($xmlResponse->Directory as $t) {
-            $catalogs->put((string)$t->attributes()['key'], (string)$t->attributes()['title']);
+        foreach($xmlResponse->Directory as $catalog) {
+            $catalogs->put((string)$catalog->attributes()['key'], (string)$catalog->attributes()['title']);
         }
 
         return response()
@@ -58,10 +58,14 @@ class PlexController extends Controller
 
         $movies = collect();
 
-        $server = json_decode($request->cookie('plex'), true);
+        $server = json_decode($request->cookie('plex'), true, 10, JSON_THROW_ON_ERROR);
 
         foreach ($request->get('ids') as $id) {
-            $catalogRequest = Http::get($server['s'] . ':' . $server['p'] . '/library/sections/' . $id . '/all?' . (($request->get('unwatchedOnly', false) === "true") ? 'unwatched=1&' : '') . 'X-Plex-Token=' . $server['t']);
+            try {
+                $catalogRequest = Http::get($server['s'] . ':' . $server['p'] . '/library/sections/' . $id . '/all?' . (($request->get('unwatchedOnly', false) === "true") ? 'unwatched=1&' : '') . 'X-Plex-Token=' . $server['t']);
+            } catch (\Throwable $throwable) {
+                return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
+            }
 
             $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
 
