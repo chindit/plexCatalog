@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Service\StringUtils;
+use Chindit\PlexApi\Enum\LibraryType;
+use Chindit\PlexApi\Model\Library;
+use Chindit\PlexApi\Model\Media;
+use Chindit\PlexApi\PlexServer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\MessageBag;
 use Spatie\Browsershot\Browsershot;
 use Symfony\Component\HttpFoundation\Cookie as SfCookie;
@@ -19,21 +22,15 @@ class PlexController extends Controller
             'serverPort' => 'int',
         ]);
 
-        try {
-            $catalogRequest = Http::get($request->get('serverAddress') . ':' . $request->get('serverPort', 32400) . '/library/sections?X-Plex-Token=' . $request->get('serverToken'));
+        $plexApi = new PlexServer($request->get('serverAddress'), $request->get('serverToken'), $request->get('serverPort', 32400));
 
-            if ($catalogRequest->failed()) {
-                throw new \Exception('Unable to reach specific url');
-            }
+        try {
+            $catalogs = collect($plexApi->libraries())
+                ->filter(fn(Library $library) => $library->getType() === LibraryType::Movie || $library->getType() === LibraryType::Show)
+                ->keyBy(fn(Library $library) => $library->getId())
+                ->map(fn(Library $library) => $library->getTitle());
         } catch (\Throwable $throwable) {
             return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
-        }
-
-        $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
-
-        $catalogs = collect();
-        foreach($xmlResponse->Directory as $catalog) {
-            $catalogs->put((string)$catalog->attributes()['key'], (string)$catalog->attributes()['title']);
         }
 
         return response()
@@ -56,59 +53,30 @@ class PlexController extends Controller
             'ids.*' => 'integer'
         ]);
 
-        $movies = collect();
-
         $server = json_decode($request->cookie('plex'), true, 10, JSON_THROW_ON_ERROR);
+
+        $plexApi = new PlexServer($server['s'], $server['t'], $server['p']);
+
+        $movies = collect();
 
         foreach ($request->get('ids') as $id) {
             try {
-                $catalogRequest = Http::get($server['s'] . ':' . $server['p'] . '/library/sections/' . $id . '/all?' . (($request->get('unwatchedOnly', false) === "true") ? 'unwatched=1&' : '') . 'X-Plex-Token=' . $server['t']);
+                $movies = $movies->merge($plexApi->library($id), ($request->get('unwatchedOnly', false) === "true"));
             } catch (\Throwable $throwable) {
                 return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
             }
-
-            $xmlResponse = simplexml_load_string($catalogRequest->toPsrResponse()->getBody()->getContents());
-
-            $iteratorKey = null;
-            switch ($xmlResponse->attributes()['viewGroup']) {
-                case 'movie':
-                    $iteratorKey = 'Video';
-                    break;
-                case 'show':
-                    $iteratorKey = 'Directory';
-                    break;
-            }
-
-            if (is_null($iteratorKey)) {
-                continue;
-            }
-
-            foreach ($xmlResponse->$iteratorKey as $movie) {
-                $genres = collect();
-                $actors = collect();
-                foreach ($movie->Genre as $genre) {
-                    $genres->push((string)$genre->attributes()['tag']);
-                }
-                foreach ($movie->Role as $actor) {
-                    $actors->push((string)$actor->attributes()['tag']);
-                }
-                $movies->push([
-                    'title' => (string)$movie->attributes()['title'],
-                    'summary' => (string)$movie->attributes()['summary'],
-                    'thumb' => (string)$movie->attributes()['thumb'],
-                    'duration' => round((int)$movie->attributes()['duration'] / 60_000, 0),
-                    'year' => (int)$movie->attributes()['year'],
-                    'actors' => $actors->implode(', '),
-                    'genres' => $genres->implode(', '),
-                ]);
-            }
         }
-
-
-        $movies = $movies->map(function(array $movie) {
-            // Title should start with an uppercase for better sorting
-            $movie['title'] = ucfirst(StringUtils::stripPrefix($movie['title']));
-            return $movie;
+        $movies = $movies->map(function(Media $movie) {
+            return [
+                // Title should start with an uppercase for better sorting
+                'title' => ucfirst(StringUtils::stripPrefix($movie->getTitle())),
+                'summary' => $movie->getSummary(),
+                'thumb' => $movie->getThumb(),
+                'duration' => round($movie->getDuration() / 60),
+                'year' => $movie->getYear(),
+                'actors' => implode(', ', $movie->getActors()),
+                'genres' => implode(', ', $movie->getGenres()),
+            ];
         });
 
         $movies = $movies->sortBy('title');

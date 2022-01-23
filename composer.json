@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.0",
         "ext-curl": "*",
+        "chindit/plex-api": "dev-master",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.4.1",
@@ -28,6 +29,9 @@
         "nunomaduro/collision": "^5.11",
         "phpunit/phpunit": "^9.5.11"
     },
+    "repositories": [
+        { "type": "vcs", "url": "https://github.com/chindit/plex-api" }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
@@ -62,6 +66,6 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
