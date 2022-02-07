@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\PlexController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,5 +18,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/catalog', [PlexController::class, 'listCatalogs'])->name('catalog');
-Route::post('/report', [PlexController::class, 'generateReport'])->name('report');
+Route::middleware(['auth'])->group(function() {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/server/add', [DashboardController::class, 'server'])->name('add_server');
+});
+
+require __DIR__.'/auth.php';

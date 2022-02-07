@@ -2,14 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Authenticatable $model) {
+            $model->setAttribute($model->getKeyName(), Uuid::uuid4());
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +33,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'server_url',
+        'server_port',
+        'server_token',
+        'api_token',
     ];
 
     /**
@@ -39,5 +56,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'server_port' => 'int'
     ];
 }

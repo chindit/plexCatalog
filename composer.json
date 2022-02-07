@@ -10,14 +10,15 @@
     "require": {
         "php": "^8.0",
         "ext-curl": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*",
         "chindit/plex-api": "dev-master",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.4.1",
+        "laravel/breeze": "^1.7",
         "laravel/framework": "^8.80",
         "laravel/tinker": "^2.7",
-        "ext-simplexml": "*",
-        "ext-json": "*",
         "spatie/browsershot": "^3.52"
     },
     "require-dev": {

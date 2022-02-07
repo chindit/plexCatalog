@@ -10,7 +10,7 @@
                 </ul>
             </div>
         @endif
-        <form method="POST" action="{{ route('catalog')  }}">
+        <form method="POST" action="">
             <div class="row mb-3">
                 <div class="col">
                     <label for="serverAddress" class="form-label">Plex server address</label>
