@@ -26,9 +26,10 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
-<body>
-        <div class="container d-flex justify-content-center align-items-center h-100v">
-            {{ $slot }}
-        </div>
-    </body>
+<body class="h-100v">
+    @include('layouts.navigation')
+    <div class="container d-flex mt-5 justify-content-center align-items-center">
+        {{ $slot }}
+    </div>
+</body>
 </html>
