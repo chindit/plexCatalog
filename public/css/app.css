@@ -10553,4 +10553,11 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.logo {
+    width: 20px;
+    height: 20px;
+}
+.h-100v {
+    height: 100vh;
+}
 
