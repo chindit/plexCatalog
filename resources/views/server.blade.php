@@ -9,21 +9,25 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="post" x-data="getToken()">
+                    <form method="post">
                         <div class="mb-3">
                             <label for="serverUrl" class="form-label">Server URL</label>
-                            <input type="url" class="form-control" id="serverUrl" x-model="formData.url" required>
+                            <input type="url" class="form-control" id="serverUrl" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="serverPort" class="form-label">Email address</label>
-                            <input type="number" class="form-control" id="serverPort" placeholder="32400" x-model="formData.port" required>
+                            <label for="serverPort" class="form-label">Server port</label>
+                            <input type="number" class="form-control" id="serverPort" placeholder="32400" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="serverToken" class="form-label">Server token</label>
-                            <input type="email" class="form-control" id="serverToken" required>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#serverTokenModal">I don't know my token</button>
+                        <div class="mb-3 row">
+                            <div class="col-auto">
+                              <label for="serverToken" class="form-label">Server token</label>
+                                <input type="email" class="form-control" id="serverToken" required>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#serverTokenModal">I don't know my token</button>
+                            </div>
                         </div>
 
                         <div class="col-auto">
@@ -44,24 +48,25 @@
                 </div>
                 <div class="modal-body">
                     <form x-data="getToken()" @submit.prevent="submitData">
-                        <template x-if="invalidServerUrl">
-                            <div class="alert alert-danger">Your server URL is invalid.  Please close this modal, update your server URL and try again</div>
-                        </template>
-                        <div class="mb-3">
-                            <label for="serverPassword" class="form-label">Server password</label>
-                            <input type="password" class="form-control" id="serverPassword" x-model="formData.password">
+                        <div class="mb-3 row">
+                            <label for="email" class="col-sm-3 col-form-label">Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" x-model="formData.email" required autofocus>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="password" class="col-sm-3 col-form-label">Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" id="password" name="email" value="" x-model="formData.password" required>
+                            </div>
                         </div>
                         <p class="italic">
-                            Your password will <span class="font-bold">only</span> be used to get your token and won't be stored.
+                            Your email and password will <span class="font-bold">only</span> be used to get your token and won't be stored.
                         </p>
                         <div class="mb-3">
                             <input type="submit" class="btn btn-success" value="Get my token">
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -69,46 +74,29 @@
     @push('javascript')
         <script>
             function getToken() {
-                console.log('Oui?');
                 return {
                     formData: {
-                        url: '',
-                        port: '',
+                        email: '',
                         password: ''
                     },
-                    invalidServerUrl: false,
 
                     submitData() {
-                        if (!this.isValidHttpUrl(this.formData.url)) {
-                            this.invalidServerUrl = true;
-                            return;
-                        }
-                        this.message = ''
-                        console.log(this.formData);
-                        /*fetch('/contact', {
+                        fetch('/api/token', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(this.formData)
+                            body: JSON.stringify({
+                                'email': this.formData.email,
+                                'password': this.formData.password,
+                                '_token': '{{ csrf_token() }}',
+                            })
                         })
-                            .then(() => {
-                                this.message = 'Form sucessfully submitted!'
+                            .then((a, b) => {
+                                console.log(a,b);
                             })
                             .catch(() => {
                                 this.message = 'Ooops! Something went wrong!'
-                            })*/
+                            })
                     },
-
-                    isValidHttpUrl(string) {
-                        let url;
-
-                        try {
-                            url = new URL(string);
-                        } catch (_) {
-                            return false;
-                        }
-
-                        return url.protocol === "http:" || url.protocol === "https:";
-                    }
                 }
             }
         </script>

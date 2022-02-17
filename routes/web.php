@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/server/add', [DashboardController::class, 'server'])->name('add_server');
+    Route::post('/api/token', [ApiController::class, 'getPlexToken']);
 });
 
 require __DIR__.'/auth.php';
