@@ -12,6 +12,10 @@ class ApiController extends Controller
         $req = \Http::withHeaders([
             'Content-Type' => 'application/json',
             'Authorization' => 'Basic ' . base64_encode($request->get('email') . ':' . $request->get('password')),
+            'X-Plex-Version: 1.0',
+            'X-Plex-Platform: Linux',
+            'X-Plex-Platform-Version: 1.0',
+            'X-Plex-Provides: controller',
         ])->post('https://plex.tv/users/sign_in.xml');
 
         dd($req->toPsrResponse()->getBody()->getContents());
