@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Service\StringUtils;
+use App\Service\Thumbnailer;
 use Chindit\PlexApi\Enum\LibraryType;
 use Chindit\PlexApi\Model\Library;
 use Chindit\PlexApi\Model\Media;
 use Chindit\PlexApi\PlexServer;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 use Spatie\Browsershot\Browsershot;
 use Symfony\Component\HttpFoundation\Cookie as SfCookie;
 
@@ -46,7 +48,7 @@ class PlexController extends Controller
             ));
     }
 
-    public function generateReport(Request $request)
+    public function generateReport(Request $request, Thumbnailer $thumbnailer)
     {
         $request->validate([
             'ids' => 'required|array',
@@ -66,12 +68,13 @@ class PlexController extends Controller
                 return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
             }
         }
-        $movies = $movies->map(function(Media $movie) {
+        $movies = $movies->map(function(Media $movie) use ($thumbnailer, $server) {
+            // Download thumb & resize it
             return [
                 // Title should start with an uppercase for better sorting
                 'title' => ucfirst(StringUtils::stripPrefix($movie->getTitle())),
                 'summary' => $movie->getSummary(),
-                'thumb' => $movie->getThumb(),
+                'thumb' => $movie->getThumb() ? $thumbnailer->thumbnail($server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t']) : '',
                 'duration' => round($movie->getDuration() / 60),
                 'year' => $movie->getYear(),
                 'actors' => implode(', ', $movie->getActors()),
@@ -79,7 +82,9 @@ class PlexController extends Controller
             ];
         });
 
-        $movies = $movies->sortBy('title');
+        $movies = $movies->sortBy(function (array $movie) {
+            return Str::ascii($movie['title']);
+        });
 
         $catalog = view('templates/catalog', [
             'server' => $server['s'],
