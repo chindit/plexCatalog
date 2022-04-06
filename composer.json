@@ -11,10 +11,9 @@
         "php": "^8.0",
         "ext-curl": "*",
         "chindit/plex-api": "dev-master",
-        "fideloper/proxy": "^4.4",
-        "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.4.1",
-        "laravel/framework": "^8.80",
+        "fruitcake/laravel-cors": "^3.0",
+        "guzzlehttp/guzzle": "^7.4.2",
+        "laravel/framework": "^9.7",
         "laravel/tinker": "^2.7",
         "ext-simplexml": "*",
         "ext-json": "*",
@@ -22,15 +21,18 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
-        "facade/ignition": "^2.17",
-        "fakerphp/faker": "^1.17.0",
-        "laravel/sail": "^1.13.0",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.11",
-        "phpunit/phpunit": "^9.5.11"
+        "fakerphp/faker": "^1.19.0",
+        "laravel/sail": "^1.13.9",
+        "mockery/mockery": "^1.5.0",
+        "nunomaduro/collision": "^6.2",
+        "phpunit/phpunit": "^9.5.20",
+        "spatie/laravel-ignition": "^1.2.0"
     },
     "repositories": [
-        { "type": "vcs", "url": "https://github.com/chindit/plex-api" }
+        {
+            "type": "vcs",
+            "url": "https://github.com/chindit/plex-api"
+        }
     ],
     "autoload": {
         "psr-4": {
