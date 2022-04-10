@@ -63,18 +63,26 @@ class PlexController extends Controller
 
         foreach ($request->get('ids') as $id) {
             try {
-                $movies = $movies->merge($plexApi->library($id), ($request->get('unwatchedOnly', false) === "true"));
+                $movies = $movies->merge($plexApi->library($id, ($request->get('unwatchedOnly', false) === "true")));
             } catch (\Throwable $throwable) {
                 return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
             }
         }
-        $movies = $movies->map(function(Media $movie) use ($thumbnailer, $server) {
-            // Download thumb & resize it
+
+        $isCatalogOnly = ($request->get('htmlOnly', false) === "true");
+
+        $movies = $movies->map(function(Media $movie) use ($thumbnailer, $server, $isCatalogOnly) {
+            // Download thumb & resize it but only if PDF rendering is required
+            if ($isCatalogOnly) {
+                $thumbnail = $movie->getThumb();
+            } else {
+                $thumbnail = $movie->getThumb() ? $thumbnailer->thumbnail($server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t']) : '';
+            }
             return [
                 // Title should start with an uppercase for better sorting
                 'title' => ucfirst(StringUtils::stripPrefix($movie->getTitle())),
                 'summary' => $movie->getSummary(),
-                'thumb' => $movie->getThumb() ? $thumbnailer->thumbnail($server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t']) : '',
+                'thumb' => $thumbnail,
                 'duration' => round($movie->getDuration() / 60),
                 'year' => $movie->getYear(),
                 'actors' => implode(', ', $movie->getActors()),
@@ -95,7 +103,7 @@ class PlexController extends Controller
             'htmlOnly' => $request->get('htmlOnly', false) === "true",
         ])->render();
 
-        if ($request->get('htmlOnly', false) === "true")
+        if ($isCatalogOnly)
         {
             return $catalog;
         }

@@ -10,12 +10,12 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "axios": "^0.25",
-        "laravel-mix": "^6.0.41",
+        "axios": "^0.26",
+        "laravel-mix": "^6.0.43",
         "lodash": "^4.17.21",
-        "postcss": "^8.4.5"
+        "postcss": "^8.4.12"
     },
     "dependencies": {
-        "puppeteer": "^13.1.1"
+        "puppeteer": "^13.5.2"
     }
 }
