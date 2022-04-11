@@ -32,6 +32,9 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+        img {
+            width: 150px;
+        }
     </style>
 </head>
 <body>
