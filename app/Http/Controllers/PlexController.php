@@ -73,11 +73,15 @@ class PlexController extends Controller
 
         $movies = $movies->map(function(Media $movie) use ($thumbnailer, $server, $isCatalogOnly) {
             // Download thumb & resize it but only if PDF rendering is required
-            if ($isCatalogOnly) {
-                $thumbnail = $movie->getThumb();
+            if ($movie->getThumb()) {
+                $thumbnail = $server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t'];
+                if (!$isCatalogOnly) {
+                    $thumbnail = $thumbnailer->thumbnail($thumbnail);
+                }
             } else {
-                $thumbnail = $movie->getThumb() ? $thumbnailer->thumbnail($server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t']) : '';
+                $thumbnail = '';
             }
+
             return [
                 // Title should start with an uppercase for better sorting
                 'title' => ucfirst(StringUtils::stripPrefix($movie->getTitle())),
