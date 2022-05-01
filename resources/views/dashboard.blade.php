@@ -12,7 +12,7 @@
                     You haven't activated any server yet.<br>
                     Do you want to activate a server now ?<br>
                     <a class="btn btn-info" href="{{ route('add_server') }}">Yes</a>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

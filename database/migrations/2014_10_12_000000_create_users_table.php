@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->string('server_url')->nullable();
             $table->unsignedSmallInteger('server_port')->default(32400);
-            $table->string('token')->nullable();
+            $table->string('server_token')->nullable();
         });
     }
 

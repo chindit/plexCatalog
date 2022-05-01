@@ -26,7 +26,7 @@
                                 <input type="email" class="form-control" id="serverToken" required>
                             </div>
                             <div class="col-auto">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#serverTokenModal">I don't know my token</button>
+                                <button class="btn mt-4 btn-info" data-bs-toggle="modal" data-bs-target="#serverTokenModal">I don't know my token</button>
                             </div>
                         </div>
 
@@ -39,7 +39,7 @@
         </div>
     </div>
     <!-- New server modal -->
-    <div class="modal" tabindex="-1" id="serverTokenModal">
+    <div class="modal" tabindex="-1" id="serverTokenModal" x-data="modalComponent">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -47,7 +47,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form x-data="getToken()" @submit.prevent="submitData">
+                    <template x-if="showError">
+                        <div class="alert alert-danger" x-text="message"></div>
+                    </template>
+                    <template x-if="showSuccess">
+                        <div class="alert alert-success">Your token has been correctly retrieved.  You can now close this modal</div>
+                    </template>
+
+                    <form @submit.prevent="submitData">
                         <div class="mb-3 row">
                             <label for="email" class="col-sm-3 col-form-label">Email</label>
                             <div class="col-sm-9">
@@ -72,15 +79,18 @@
         </div>
     </div>
     @push('javascript')
-        <script>
-            function getToken() {
-                return {
+        <script type="application/javascript" async defer>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('modalComponent', () => ({
+                    showError: false,
+                    showSuccess: false,
+                    message: '',
                     formData: {
                         email: '',
-                        password: ''
+                        password: '',
                     },
 
-                    submitData() {
+                    async submitData() {
                         fetch('/api/token', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -89,16 +99,23 @@
                                 'password': this.formData.password,
                                 '_token': '{{ csrf_token() }}',
                             })
-                        })
-                            .then((a, b) => {
-                                console.log(a,b);
+                        }).then(response => response.json())
+                            .then((response) => {
+                                if (!response.token)
+                                {
+                                    this.showError = true;
+                                    this.message = response.error;
+                                } else {
+                                    this.showSuccess = true;
+                                    document.querySelector('#serverToken').value = response.token;
+                                }
                             })
-                            .catch(() => {
+                            .catch((e) => {
                                 this.message = 'Ooops! Something went wrong!'
                             })
-                    },
-                }
-            }
+                    }
+                }))
+            });
         </script>
     @endpush
 </x-app-layout>

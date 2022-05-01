@@ -13,20 +13,21 @@
         "ext-json": "*",
         "ext-simplexml": "*",
         "chindit/plex-api": "1",
-        "fruitcake/laravel-cors": "^2.0",
+        "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.4",
-        "laravel/breeze": "^1.8",
-        "laravel/framework": "^9.0",
+        "laravel/breeze": "^1.9",
+        "laravel/framework": "^9.10",
         "laravel/tinker": "^2.7",
-        "spatie/browsershot": "^3.52"
+        "spatie/browsershot": "^3.52",
+        "symfony/serializer": "^6.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6.7",
-        "spatie/laravel-ignition": "^1.0",
+        "spatie/laravel-ignition": "^1.2",
         "fakerphp/faker": "^1.19",
-        "laravel/sail": "^1.13",
+        "laravel/sail": "^1.14",
         "mockery/mockery": "^1.5",
-        "nunomaduro/collision": "^6.1",
+        "nunomaduro/collision": "^6.2",
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
