@@ -10,20 +10,21 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <form method="post">
+                        @csrf
                         <div class="mb-3">
                             <label for="serverUrl" class="form-label">Server URL</label>
-                            <input type="url" class="form-control" id="serverUrl" required>
+                            <input type="url" class="form-control" id="serverUrl" name="serverUrl" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="serverPort" class="form-label">Server port</label>
-                            <input type="number" class="form-control" id="serverPort" placeholder="32400" required>
+                            <input type="number" class="form-control" id="serverPort" name="serverPort" placeholder="32400" value="32400" required>
                         </div>
 
                         <div class="mb-3 row">
                             <div class="col-auto">
                               <label for="serverToken" class="form-label">Server token</label>
-                                <input type="email" class="form-control" id="serverToken" required>
+                                <input type="text" class="form-control" name="serverToken" id="serverToken" required>
                             </div>
                             <div class="col-auto">
                                 <button class="btn mt-4 btn-info" data-bs-toggle="modal" data-bs-target="#serverTokenModal">I don't know my token</button>

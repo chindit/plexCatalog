@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ServerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,7 +22,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/server/add', [DashboardController::class, 'server'])->name('add_server');
+    Route::get('/server/add', [ServerController::class, 'server'])->name('add_server');
+    Route::post('/server/add', [ServerController::class, 'createServer'])->name('create_server');
     Route::post('/api/token', [ApiController::class, 'getPlexToken']);
 });
 

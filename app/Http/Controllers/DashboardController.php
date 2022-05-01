@@ -13,9 +13,4 @@ class DashboardController extends Controller
         $user = User::find(Auth::id());
         return view('dashboard', ['hasServer' => $user->server_token]);
     }
-
-    public function server()
-    {
-        return view('server');
-    }
 }
