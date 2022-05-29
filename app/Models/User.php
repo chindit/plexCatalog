@@ -37,6 +37,7 @@ class User extends Authenticatable
         'server_port',
         'server_token',
         'api_token',
+        'last_sync',
     ];
 
     /**
@@ -56,6 +57,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'server_port' => 'int'
+        'server_port' => 'int',
+        'last_sync' => 'datetime'
     ];
 }

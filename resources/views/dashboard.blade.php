@@ -14,6 +14,12 @@
                     <a class="btn btn-info" href="{{ route('add_server') }}">Yes</a>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+            @elseif($needSync)
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    Do you want to (re)sync your collection ?
+                    <a class="btn btn-info" href="#">Yes</a>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             @endif
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">

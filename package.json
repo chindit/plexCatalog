@@ -10,18 +10,19 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "@tailwindcss/forms": "^0.5.0",
+        "@popperjs/core": "^2.11.5",
+        "@tailwindcss/forms": "^0.5.2",
         "alpinejs": "^3.10.2",
-        "autoprefixer": "^10.4.5",
+        "autoprefixer": "^10.4.7",
         "axios": "^0.27",
         "bootstrap": "^5.1",
         "laravel-mix": "^6.0.43",
         "lodash": "^4.17.21",
-        "postcss": "^8.4.13",
+        "postcss": "^8.4.14",
         "postcss-import": "^14.1.0",
         "tailwindcss": "^3.0.24"
     },
     "dependencies": {
-        "puppeteer": "^13.7.0"
+        "puppeteer": "^14.1.1"
     }
 }
