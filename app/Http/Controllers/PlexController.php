@@ -89,6 +89,7 @@ class PlexController extends Controller
                 'thumb' => $thumbnail,
                 'duration' => round($movie->getDuration() / 60),
                 'year' => $movie->getYear(),
+                'quality' => $movie->getResolution(),
                 'actors' => implode(', ', $movie->getActors()),
                 'genres' => implode(', ', $movie->getGenres()),
             ];
