@@ -9,7 +9,7 @@ final class StringUtils
     public static function stripPrefix(string $text): string
     {
         $prefixes = collect([
-            'fr' => ['Le ', 'La ', 'Les ', 'L\''],
+            'fr' => ['Le ', 'La ', 'Les ', 'L\'', 'Un ', 'Une '],
             'en' => ['The '],
             'es' => ['El ', 'La ', 'Los ']
         ])

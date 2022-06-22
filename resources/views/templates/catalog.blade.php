@@ -50,7 +50,7 @@
                     <div class="float-start">
                         {{ $movie['duration'] }} min
                         <span class="ps-5" style="font-family:'Lucida Console', monospace">
-                            {{ $movie['quality'] }}p
+                            {{ $movie['quality'] }}
                         </span>
                     </div>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Service\StringUtils;
 use App\Service\Thumbnailer;
 use Chindit\PlexApi\Enum\LibraryType;
+use Chindit\PlexApi\Model\File;
 use Chindit\PlexApi\Model\Library;
 use Chindit\PlexApi\Model\Media;
 use Chindit\PlexApi\PlexServer;
@@ -89,7 +90,7 @@ class PlexController extends Controller
                 'thumb' => $thumbnail,
                 'duration' => round($movie->getDuration() / 60),
                 'year' => $movie->getYear(),
-                'quality' => $movie->getResolution(),
+                'quality' => in_array(File::class, class_uses_recursive($movie), true) ? ($movie->getResolution() > 10 ? $movie->getResolution() . 'p' : ($movie->getResolution() === 4 ? '4k' : '')) : '',
                 'actors' => implode(', ', $movie->getActors()),
                 'genres' => implode(', ', $movie->getGenres()),
             ];
@@ -120,7 +121,9 @@ class PlexController extends Controller
                 ->format('A4')
                 ->timeout(3000)
                 ->margins(25, 0, 15, 0)
-                ->footerHtml('<div class="pageNumber"></div>')
+                ->showBrowserHeaderAndFooter()
+                ->hideHeader()
+                ->footerHtml('<div style="text-align: right;width: 297mm;font-size: 8px;"><span style="margin-right: 1cm"><span class="pageNumber"></span>/<span class="totalPages"></span></span></div>')
                 ->save($fileName);
 
             return response()->download($fileName, 'catalog.pdf');
