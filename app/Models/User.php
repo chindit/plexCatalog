@@ -7,6 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @property string server_url
+ * @property string server_port
+ * @property string server_token
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;

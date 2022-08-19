@@ -17,7 +17,7 @@
             @elseif($needSync)
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
                     Do you want to (re)sync your collection ?
-                    <a class="btn btn-info" href="#">Yes</a>
+                    <a class="btn btn-info" href="{{ route('sync') }}">Yes</a>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif

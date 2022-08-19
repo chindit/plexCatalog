@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessCollection;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,5 +15,14 @@ class DashboardController extends Controller
 
         $needSync = ($user->last_sync ?: new \DateTime('last month')) < new \DateTime('last week');
         return view('dashboard', ['hasServer' => $user->server_token, 'needSync' => $needSync]);
+    }
+
+    public function sync()
+    {
+        if (Auth::user()) {
+            $this->dispatch(new ProcessCollection(Auth::user()));
+        }
+
+        return redirect()->route('dashboard');
     }
 }
