@@ -8,6 +8,7 @@ use Chindit\PlexApi\Enum\LibraryType;
 use Chindit\PlexApi\Model\File;
 use Chindit\PlexApi\Model\Library;
 use Chindit\PlexApi\Model\Media;
+use Chindit\PlexApi\Model\Show;
 use Chindit\PlexApi\PlexServer;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -72,7 +73,7 @@ class PlexController extends Controller
 
         $isCatalogOnly = ($request->get('htmlOnly', false) === "true");
 
-        $movies = $movies->map(function(Media $movie) use ($thumbnailer, $server, $isCatalogOnly) {
+        $movies = $movies->map(function(Media|Show $movie) use ($thumbnailer, $server, $isCatalogOnly) {
             // Download thumb & resize it but only if PDF rendering is required
             if ($movie->getThumb()) {
                 $thumbnail = $server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t'];
