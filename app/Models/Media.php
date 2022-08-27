@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Kyslik\ColumnSortable\Sortable;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -30,7 +31,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Media extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
 
     public $incrementing = false;
 
@@ -66,7 +67,20 @@ class Media extends Model
         'resolution',
         'summary',
         'thumb',
-        'year'
+        'year',
+        'user_id'
+    ];
+
+    protected $sortable = [
+        'audio_codec',
+        'video_codec',
+        'title',
+        'aspect_ratio',
+        'bitrate',
+        'framerate',
+        'resolution',
+        'container',
+        'duration',
     ];
 
     /**
@@ -85,4 +99,9 @@ class Media extends Model
         'resolution' => 'int',
         'year' => 'int'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

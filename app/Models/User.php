@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Ramsey\Uuid\Uuid;
@@ -65,4 +66,9 @@ class User extends Authenticatable
         'server_port' => 'int',
         'last_sync' => 'datetime'
     ];
+
+    public function medias(): HasMany
+    {
+        return $this->hasMany(Media::class);
+    }
 }

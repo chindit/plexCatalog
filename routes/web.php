@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ServerController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,8 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/server/add', [ServerController::class, 'server'])->name('add_server');
     Route::post('/server/add', [ServerController::class, 'createServer'])->name('create_server');
     Route::post('/api/token', [ApiController::class, 'getPlexToken']);
+
+    Route::get('/medias', [MediaController::class, 'index']);
 });
 
 require __DIR__.'/auth.php';
