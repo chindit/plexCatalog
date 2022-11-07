@@ -12,6 +12,12 @@ class MediaController extends Controller
     {
         $medias = Media::sortable()->paginate(25);
 
-        return view('medias')->with('medias', $medias);
+        $values = collect();
+
+        foreach (Media::$filtrable as $property) {
+            $values->put($property, Media::select($property)->distinct()->pluck($property));
+        }
+
+        return view('medias')->with('medias', $medias)->with('filters', $values);
     }
 }

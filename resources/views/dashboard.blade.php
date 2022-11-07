@@ -16,7 +16,7 @@
                 </div>
             @elseif($needSync)
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    Do you want to (re)sync your collection ?
+                    Do you want to (re)sync your collection ?  @if($user->last_sync)Last sync was {{ $user->last_sync->diffForHumans() }}@endif
                     <a class="btn btn-info" href="{{ route('sync') }}">Yes</a>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>

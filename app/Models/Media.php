@@ -83,6 +83,15 @@ class Media extends Model
         'duration',
     ];
 
+    public static $filtrable = [
+        'audio_codec',
+        'video_codec',
+        'aspect_ratio',
+        'framerate',
+        'resolution',
+        'container',
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *

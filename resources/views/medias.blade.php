@@ -8,6 +8,11 @@
     <div class="py-12">
         <h1>Medias</h1>
 
+        <h3>Filtering</h3>
+        <p>View only:</p>
+        <form method="GET">
+            <
+        </form>
         <table class="table table-bordered table-hover">
             <thead>
             <th>@sortablelink('title', 'Title')</th>

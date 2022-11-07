@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,6 +13,7 @@ use Ramsey\Uuid\Uuid;
  * @property string server_url
  * @property string server_port
  * @property string server_token
+ * @property Carbon last_sync
  */
 class User extends Authenticatable
 {

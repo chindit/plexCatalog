@@ -15,7 +15,7 @@ class DashboardController extends Controller
     {
         $user = User::find(Auth::id());
 
-        $needSync = ($user->last_sync ?: new \DateTime('last month')) < new \DateTime('last week');
+        $needSync = ($user->last_sync ?: Carbon::now()->subMonth())->addWeeks(2)->isPast();
         return view(
             'dashboard',
             [
