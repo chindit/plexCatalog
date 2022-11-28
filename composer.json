@@ -1,71 +1,88 @@
 {
-    "name": "laravel/laravel",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": [
-        "framework",
-        "laravel"
-    ],
-    "license": "MIT",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "prefer-stable": false,
     "require": {
-        "php": "^8.0",
-        "ext-curl": "*",
-        "ext-json": "*",
-        "ext-simplexml": "*",
-        "chindit/plex-api": "^2.0",
-        "fruitcake/laravel-cors": "^3.0",
-        "guzzlehttp/guzzle": "^7.5",
-        "kyslik/column-sortable": "^6.4",
-        "laravel/breeze": "^1.13",
-        "laravel/framework": "^9.31",
-        "laravel/tinker": "^2.7",
-        "spatie/browsershot": "^3.57",
-        "symfony/serializer": "^6.1"
+        "php": ">=8.1",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "chindit/plex-api": "dev-master",
+        "doctrine/doctrine-bundle": "^2.7",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "doctrine/orm": "^2.13",
+        "symfony/console": "6.2.*",
+        "symfony/dotenv": "6.2.*",
+        "symfony/flex": "^2",
+        "symfony/form": "6.2.*",
+        "symfony/framework-bundle": "6.2.*",
+        "symfony/proxy-manager-bridge": "6.2.*",
+        "symfony/runtime": "6.2.*",
+        "symfony/security-bundle": "6.2.*",
+        "symfony/twig-bundle": "6.2.*",
+        "symfony/uid": "6.2.*",
+        "symfony/validator": "6.2.*",
+        "symfony/yaml": "6.2.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.7.0",
-        "barryvdh/laravel-ide-helper": "^2.12",
-        "fakerphp/faker": "^1.20",
-        "laravel/sail": "^1.16",
-        "mockery/mockery": "^1.5",
-        "nunomaduro/collision": "^6.3",
-        "phpunit/phpunit": "^9.5",
-        "spatie/laravel-ignition": "^1.5"
+        "symfony/debug-bundle": "6.2.*",
+        "symfony/maker-bundle": "^1.48",
+        "symfony/monolog-bundle": "^3.0",
+        "symfony/stopwatch": "6.2.*",
+        "symfony/web-profiler-bundle": "6.2.*"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "App\\Tests\\": "tests/"
         }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*"
     },
     "scripts": {
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
         ],
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "@php artisan key:generate --ansi"
+        "post-update-cmd": [
+            "@auto-scripts"
         ]
     },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
     "extra": {
-        "laravel": {
-            "dont-discover": []
+        "symfony": {
+            "allow-contrib": false,
+            "require": "6.2.*"
         }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
