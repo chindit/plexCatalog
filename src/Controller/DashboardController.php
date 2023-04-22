@@ -44,7 +44,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/sync', name: 'app_sync')]
-    public function syncCollection(#[CurrentUser]User $user, CollectionService $collectionService)
+    public function syncCollection(#[CurrentUser]User $user, CollectionService $collectionService): Response
     {
         $collectionService->syncCollection($user);
 

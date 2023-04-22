@@ -5,7 +5,6 @@ namespace App\Service;
 
 use App\Entity\Media as MediaEntity;
 use App\Entity\User;
-use App\Repository\MediaRepository;
 use Chindit\PlexApi\Enum\LibraryType;
 use Chindit\PlexApi\PlexServer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 
 final class CollectionService
 {
-    public function __construct(private EntityManagerInterface $entityManager, private MediaRepository $mediaRepository)
+    public function __construct(private EntityManagerInterface $entityManager)
     {}
 
     public function syncCollection(User $user): void
@@ -30,10 +29,8 @@ final class CollectionService
             $medias = $server->library($library->getId());
 
             foreach ($medias as $media) {
-                //$persistedMedia = $this->mediaRepository->findOneBy(['owner' => $user, 'serverId' => $media->getId()]);
-                //if (!$persistedMedia) {
-                    $persistedMedia = new MediaEntity();
-                //}
+                $persistedMedia = new MediaEntity();
+
                 $this->entityManager->persist(
                     $persistedMedia
                     ->setServerId($media->getId())
@@ -55,14 +52,7 @@ final class CollectionService
                     ->setYear((int)$media->getYear())
                     ->setOwner($user)
                 );
-                           //dump($persistedMedia->getServerId(), $persistedMedia->getLibraryId());
-                /*$this->entityManager->persist($persistedMedia);
-                try {
-                    $this->entityManager->flush();
-                } catch (UniqueConstraintViolationException $e) {
 
-                }    */
-                //$this->entityManager->getConnection()->prepare(
                 $this->entityManager->getConnection()->prepare(
                     "INSERT INTO media (id, server_id, library_id, title, audio_codec, video_codec, aspect_ratio, bitrate, framerate,
                    height, width, profile, resolution, summary, thumb, year, container, duration, owner_id) VALUES (
