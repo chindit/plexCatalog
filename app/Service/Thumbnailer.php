@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Intervention\Image\Constraint;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Symfony\Component\HttpClient\HttpClient;
 
 final class Thumbnailer
@@ -15,11 +15,8 @@ final class Thumbnailer
         $resizedName = tempnam(sys_get_temp_dir(), 'plex_thumb_resized_') . '.jpg';
         file_put_contents($newName, HttpClient::create()->request('GET', $url)->getContent());
 
-        Image::make($newName)
-            ->widen(150, function (Constraint $constraint) {
-                $constraint->aspectRatio();
-            })
-            ->save($resizedName);
+        $manager = new ImageManager(new Driver());
+        $manager->read($newName)->scale(width: 150)->save($resizedName);
 
         return $resizedName;
     }
