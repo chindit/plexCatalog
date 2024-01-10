@@ -23,6 +23,7 @@ final class Thumbnailer
 
         $manager = new ImageManager(new Driver());
         $manager->read($newName)->scale(width: 150)->save($resizedName);
+        unlink($newName);
 
         return $resizedName;
     }
