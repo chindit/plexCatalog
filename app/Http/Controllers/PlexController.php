@@ -119,6 +119,7 @@ class PlexController extends Controller
             $fileName = tempnam(sys_get_temp_dir(), 'plex_') . '.pdf';
             Browsershot::html($catalog)
                 ->noSandbox()
+                ->newHeadless()
                 ->format('A4')
                 ->timeout(3000)
                 ->margins(25, 0, 15, 0)
