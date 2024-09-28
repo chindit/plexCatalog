@@ -8,24 +8,24 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^8.3",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
         "chindit/plex-api": "^2.0",
-        "guzzlehttp/guzzle": "^7.8.1",
-        "intervention/image": "^3.2",
-        "laravel/framework": "^10.40",
+        "guzzlehttp/guzzle": "^7.9.2",
+        "intervention/image": "^3.7",
+        "laravel/framework": "^11.20",
         "laravel/tinker": "^2.9",
-        "spatie/browsershot": "^4.0"
+        "spatie/browsershot": "^4.1"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.9",
+        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.23.1",
-        "laravel/sail": "^1.27.0",
-        "mockery/mockery": "^1.6.7",
-        "phpunit/phpunit": "^10.5.5",
-        "spatie/laravel-ignition": "^2.4.0"
+        "laravel/sail": "^1.31.1",
+        "mockery/mockery": "^1.6.12",
+        "phpunit/phpunit": "^11.3.0",
+        "spatie/laravel-ignition": "^2.8.0"
     },
     "repositories": [
         {

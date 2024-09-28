@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\JobStatus;
+use App\Jobs\GeneratePdf;
+use App\Jobs\ProcessCatalog;
+use App\Jobs\RenderTemplate;
+use App\Models\CatalogJobs;
 use App\Service\StringUtils;
 use App\Service\Thumbnailer;
 use Chindit\PlexApi\Enum\LibraryType;
@@ -11,6 +16,7 @@ use Chindit\PlexApi\Model\Media;
 use Chindit\PlexApi\Model\Show;
 use Chindit\PlexApi\PlexServer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Spatie\Browsershot\Browsershot;
@@ -60,55 +66,28 @@ class PlexController extends Controller
         $server = json_decode($request->cookie('plex'), true, 10, JSON_THROW_ON_ERROR);
 
         $plexApi = new PlexServer($server['s'], $server['t'], $server['p']);
-
-        $movies = collect();
-
-        foreach ($request->get('ids') as $id) {
-            try {
-                $movies = $movies->merge($plexApi->library($id, ($request->get('unwatchedOnly', false) === "true")));
-            } catch (\Throwable $throwable) {
-                return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
-            }
-        }
-
         $isCatalogOnly = ($request->get('htmlOnly', false) === "true");
 
-        $movies = $movies->map(function(Media|Show $movie) use ($thumbnailer, $server, $isCatalogOnly) {
-            // Download thumb & resize it but only if PDF rendering is required
-            if ($movie->getThumb()) {
-                $thumbnail = $server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t'];
-                if (!$isCatalogOnly) {
-                    $thumbnail = $thumbnailer->thumbnail($thumbnail);
-                }
-            } else {
-                $thumbnail = '';
-            }
+        $jobModel = CatalogJobs::create([
+            'status' => JobStatus::created,
+            'server' => (string)$plexApi
+        ]);
 
-            return [
-                // Title should start with an uppercase for better sorting
-                'title' => ucfirst(StringUtils::stripPrefix($movie->getTitle())),
-                'summary' => $movie->getSummary(),
-                'thumb' => $thumbnail,
-                'duration' => round($movie->getDuration() / 60),
-                'year' => $movie->getYear(),
-                'quality' => in_array(File::class, class_uses_recursive($movie), true) ? ($movie->getResolution() > 10 ? $movie->getResolution() . 'p' : ($movie->getResolution() === 4 ? '4k' : '')) : '',
-                'actors' => implode(', ', $movie->getActors()),
-                'genres' => implode(', ', $movie->getGenres()),
-            ];
-        });
+        $batchJobs = [];
+        foreach($request->get('ids') as $id) {
+            $batchJobs[] = new ProcessCatalog($jobModel->id, $id, $request->get('unwatchedOnly', false) === "true");
+        }
 
-        $movies = $movies->sortBy(function (array $movie) {
-            return Str::ascii($movie['title']);
-        });
+        $jobChain = [Bus::batch($batchJobs), new RenderTemplate($jobModel->id)];
+        if ($isCatalogOnly) {
+            $jobChain[] = new GeneratePdf($jobModel->id);
+        }
 
-        $catalog = view('templates/catalog', [
-            'server' => $server['s'],
-            'token' => $server['t'],
-            'port' => $server['p'],
-            'movies' => $movies,
-            'truncateDescription' => $request->get('truncateDescription', false) === "true",
-            'htmlOnly' => $request->get('htmlOnly', false) === "true",
-        ])->render();
+        Bus::chain($jobChain)->dispatch();
+
+
+
+
 
         if ($isCatalogOnly)
         {
