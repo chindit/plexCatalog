@@ -16,7 +16,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "kyslik/column-sortable": "^6.6",
         "laravel/breeze": "^2.3",
-        "laravel/framework": "^11.36",
+        "laravel/framework": "^11.37",
         "laravel/tinker": "^2.10",
         "spatie/browsershot": "^5.0",
         "symfony/serializer": "^7.2"
