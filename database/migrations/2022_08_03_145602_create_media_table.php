@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('audio_codec');
             $table->string('video_codec');
             $table->string('container');
-            $table->unsignedFloat('aspect_ratio');
+            $table->float('aspect_ratio');
             $table->unsignedInteger('bitrate');
             $table->string('framerate');
             $table->unsignedInteger('height');
