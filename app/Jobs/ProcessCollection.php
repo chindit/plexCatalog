@@ -68,6 +68,8 @@ class ProcessCollection implements ShouldQueue
                     'summary' => $media->getSummary(),
                     'thumb' => $media->getThumb(),
                     'year' => (int)$media->getYear(),
+                    'actors' => $media->getActors(),
+                    'genres' => $media->getGenres(),
                     'user_id' => $this->user->id
                 ]);
             }

@@ -26,6 +26,8 @@ use Ramsey\Uuid\Uuid;
  * @property string $summary
  * @property string $thumb
  * @property int $year
+ * @property array $actors
+ * @property array $genres
  *
  * @mixin \Eloquent
  */
@@ -68,7 +70,9 @@ class Media extends Model
         'summary',
         'thumb',
         'year',
-        'user_id'
+        'user_id',
+        'actors',
+        'genres',
     ];
 
     protected $sortable = [
@@ -97,7 +101,9 @@ class Media extends Model
         'height' => 'int',
         'width' => 'int',
         'resolution' => 'int',
-        'year' => 'int'
+        'year' => 'int',
+        'actors' => 'array',
+        'genres' => 'array',
     ];
 
     public function user()

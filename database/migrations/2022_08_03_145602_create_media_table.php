@@ -51,6 +51,8 @@ return new class extends Migration
             $table->string('thumb');
             $table->unsignedSmallInteger('year');
             $table->unsignedSmallInteger('duration');
+            $table->json('actors')->nullable();
+            $table->json('genres')->nullable();
             $table->string('user_id', 36)->index()->nullable(false);
             $table->timestamps();
         });
