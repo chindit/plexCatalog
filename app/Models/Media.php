@@ -41,7 +41,7 @@ class Media extends Model
     {
         parent::boot();
 
-        static::creating(function (Authenticatable $model) {
+        static::creating(function (self $model) {
             $model->setAttribute($model->getKeyName(), Uuid::uuid4());
         });
     }

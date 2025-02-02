@@ -68,13 +68,13 @@ class ProcessCollection implements ShouldQueue
                     'summary' => $media->getSummary(),
                     'thumb' => $media->getThumb(),
                     'year' => (int)$media->getYear(),
-                    'actors' => $media->getActors(),
-                    'genres' => $media->getGenres(),
+                    'actors' => json_encode($media->getActors()), // upsert doesn't auto-cast
+                    'genres' => json_encode($media->getGenres()), // upsert doesn't auto-cast
                     'user_id' => $this->user->id
                 ]);
             }
 
-            Media::upsert($databaseMedias->all(), ['server_id', 'user_id'], ['id', 'server_id', 'library_id', 'title', 'audio_codec', 'video_codec', 'aspect_ratio', 'bitrate', 'container',
+            Media::upsert($databaseMedias->toArray(), ['server_id', 'user_id'], ['id', 'server_id', 'library_id', 'title', 'audio_codec', 'video_codec', 'aspect_ratio', 'bitrate', 'container',
                 'duration', 'framerate', 'height', 'width', 'profile', 'resolution', 'summary', 'thumb', 'year']);
         }
     }
