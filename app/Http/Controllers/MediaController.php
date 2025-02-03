@@ -12,7 +12,7 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         $medias = Media::sortable()->paginate(25);
-$this->dispatch(new ProcessPdf(\Auth::user()));
+        $this->dispatch(new ProcessPdf(\Auth::user()));
         return view('medias')->with('medias', $medias);
     }
 }

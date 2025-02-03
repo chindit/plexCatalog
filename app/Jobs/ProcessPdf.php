@@ -34,8 +34,8 @@ class ProcessPdf implements ShouldQueue
                 'thumb' => $movie->thumb,
                 'duration' => round($movie->duration / 60),
                 'year' => $movie->year,
-                'actors' => implode(', ', $movie->),
-                'genres' => implode(', ', $movie->getGenres()),
+                'actors' => implode(', ', $movie->actors),
+                'genres' => implode(', ', $movie->genres),
             ];
         });
 
@@ -45,13 +45,16 @@ class ProcessPdf implements ShouldQueue
             'movies' => $movies,
             'truncateDescription' => true,
             'htmlOnly' => false,
+            'server' => $this->user->server_url,
+            'port' => $this->user->server_port,
+            'token' => $this->user->server_token
         ])->render();
 
         $fileName = tempnam(sys_get_temp_dir(), 'plex_') . '.pdf';
         Browsershot::html($catalog)
             ->noSandbox()
             ->format('A4')
-            ->timeout(3000)
+            ->timeout(30000)
             ->margins(25, 0, 15, 0)
             ->footerHtml('<div class="pageNumber"></div>')
             ->save($fileName);
