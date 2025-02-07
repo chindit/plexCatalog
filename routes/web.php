@@ -29,6 +29,8 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/api/token', [ApiController::class, 'getPlexToken']);
 
     Route::get('/medias', [MediaController::class, 'index']);
+    Route::get('/catalog', [DashboardController::class, 'catalog'])->name('catalog');
+    Route::post('/catalog', [DashboardController::class, 'createCatalog'])->name('create_catalog');
 });
 
 require __DIR__.'/auth.php';

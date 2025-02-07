@@ -26,6 +26,9 @@
                     <p>You have {{ $user->medias()->count()  }} medias (including show episodes)</p>
                 </div>
             </div>
+            <div class="flex justify-center my-4">
+                <a class="btn btn-primary" href="{{ route('catalog') }}">Generate catalog</a>
+            </div>
             <div class="flex mb-4">
                 <div class="w-1/2">
                     <div id="chart_video_div"></div>

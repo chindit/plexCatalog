@@ -1,6 +1,11 @@
-@extends('base')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Catalogs') }}
+        </h2>
+    </x-slot>
 
-@section('content')
+    <div class="py-12">
     <h3>List of available catalogs</h3>
 
     @if ($errors->any())
@@ -18,7 +23,7 @@
     </div>
 
     <p>Please check catalogs you want to include in your report</p>
-    <form method="POST" action="{{ route('report') }}">
+    <form method="POST">
             @foreach($catalogs as $id => $name)
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="{{ $id }}" id="checkbox-{{ $id }}" name="ids[]">
@@ -29,19 +34,19 @@
             @endforeach
         <div class="mb-3 mt-5">
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="truncateDescription" value="true" id="truncateDescription">
+                <input class="form-check-input" type="checkbox" name="truncateDescription" value="1" id="truncateDescription">
                 <label class="form-check-label" for="truncateDescription">
                     Truncate description if too big (max height allowed is thumbnail height)
                 </label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="htmlOnly" value="true" id="htmlOnly">
+                <input class="form-check-input" type="checkbox" name="htmlOnly" value="1" id="htmlOnly">
                 <label class="form-check-label" for="htmlOnly">
                     Only render a HTML version
                 </label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="unwatchedOnly" value="true" id="unwatchedOnly">
+                <input class="form-check-input" type="checkbox" name="unwatchedOnly" value="1" id="unwatchedOnly">
                 <label class="form-check-label" for="unwatchedOnly">
                     Only list unwatched movies/TV shows
                 </label>
@@ -56,4 +61,5 @@
         </div>
         @csrf
     </form>
-@endsection
+    </div>
+</x-app-layout>

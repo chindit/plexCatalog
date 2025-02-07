@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
 
     <!-- Fonts -->
@@ -39,7 +39,9 @@
     @foreach($movies as $movie)
         <div class="row mb-3" style="page-break-inside: avoid;">
             <div class="col-sm-3">
-                <img src="{{ $server }}:{{ $port }}{{ $movie['thumb'] }}?X-Plex-Token={{ $token }}" width="150px" />
+                <img
+                    src="{{ file_exists($tmpPath) ? asset($tmpPath) : $server . ':' . $port . $movie['thumb'] . '?X-Plex-Token=' . $token }}"
+                    width="150px" alt="{{ $movie['title'] }}"/>
             </div>
             <div class="col-sm-7">
                 <h3>{{ $movie['title'] }}</h3>
