@@ -33,6 +33,10 @@ class DownloadThumbs implements ShouldQueue
                 return in_array((string)$movie->library_id, $this->catalog->options['ids']);
             })
             ->each(function (Media $movie) {
+                if (file_exists($tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie->id . '.jpg'))
+                {
+                    return;
+                }
                 try {
                     $response = Http::get($this->catalog->user->server_url . ':' . $this->catalog->user->server_port . $movie->thumb, [
                         'X-Plex-Token' => $this->catalog->user->server_token
@@ -44,8 +48,12 @@ class DownloadThumbs implements ShouldQueue
 
                 if ($thumbContent !== false) {
                     $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie->id . '.jpg';
+try {
 
-                    ImageManager::imagick()->read($thumbContent)->scale(150)->save($tmpPath);
+    ImageManager::imagick()->read($thumbContent)->scale(150)->save($tmpPath);
+}catch (\Exception $e) {
+    return;
+}
                 }
             });
     }

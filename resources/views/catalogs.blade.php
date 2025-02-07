@@ -23,7 +23,7 @@
     </div>
 
     <p>Please check catalogs you want to include in your report</p>
-    <form method="POST">
+    <form method="POST" action="?XDEBUG_SESSION_START=123">
             @foreach($catalogs as $id => $name)
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="{{ $id }}" id="checkbox-{{ $id }}" name="ids[]">

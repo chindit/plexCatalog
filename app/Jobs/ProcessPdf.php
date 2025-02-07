@@ -35,6 +35,7 @@ class ProcessPdf implements ShouldQueue
             })
             ->map(function(Media $movie) {
             return [
+                'id' => $movie->id,
                 // Title should start with an uppercase for better sorting
                 'title' => Str::ucfirst(StringUtils::stripPrefix($movie->title)),
                 'summary' => $movie->summary,

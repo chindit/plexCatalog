@@ -22,6 +22,6 @@ class ServerController extends Controller
         $user->server_token = $request->get('serverToken', $user->server_token);
         $user->save();
 
-        return redirect('/dashboard');
+        return redirect('/');
     }
 }

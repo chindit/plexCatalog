@@ -40,7 +40,7 @@
         <div class="row mb-3" style="page-break-inside: avoid;">
             <div class="col-sm-3">
                 <img
-                    src="{{ file_exists($tmpPath) ? asset($tmpPath) : $server . ':' . $port . $movie['thumb'] . '?X-Plex-Token=' . $token }}"
+                    src="{{ file_exists(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie['id'] . '.jpg') ? asset(sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie['id'] . '.jpg') : $server . ':' . $port . $movie['thumb'] . '?X-Plex-Token=' . $token }}"
                     width="150px" alt="{{ $movie['title'] }}"/>
             </div>
             <div class="col-sm-7">

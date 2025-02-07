@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.3",
         "ext-curl": "*",
+        "ext-imagick": "*",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-simplexml": "*",

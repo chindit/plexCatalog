@@ -17,12 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::middleware(['auth'])->group(function() {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/sync', [DashboardController::class, 'sync'])->name('sync');
     Route::get('/server/add', [ServerController::class, 'server'])->name('add_server');
     Route::post('/server/add', [ServerController::class, 'createServer'])->name('create_server');

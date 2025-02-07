@@ -23,7 +23,7 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = User::find(Auth::id());
 
-        $needSync = $user->last_sync->lt(Carbon::now()->subMonth());
+        $needSync = $user->last_sync?->lt(Carbon::now()->subMonth()) ?? true;
 
         return view(
             'dashboard',
