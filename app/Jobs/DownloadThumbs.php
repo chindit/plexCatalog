@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Intervention\Image\ImageManager;
 
 class DownloadThumbs implements ShouldQueue
@@ -28,11 +29,19 @@ class DownloadThumbs implements ShouldQueue
     public function handle(): void
     {
         $this->catalog->user->medias
-            ->filter(function(Media $movie) {
+            ->filter(function (Media $movie) {
                 return in_array((string)$movie->library_id, $this->catalog->options['ids']);
             })
-            ->each(function(Media $movie) {
-                $thumbContent = file_get_contents($this->catalog->user->server_url . ':' . $this->catalog->user->server_port . $movie->thumb . '?X-Plex-Token=' . $this->catalog->user->server_token);
+            ->each(function (Media $movie) {
+                try {
+                    $response = Http::get($this->catalog->user->server_url . ':' . $this->catalog->user->server_port . $movie->thumb, [
+                        'X-Plex-Token' => $this->catalog->user->server_token
+                    ]);
+                    $thumbContent = $response->successful() ? $response->body() : false;
+                } catch (\Exception $e) {
+                    $thumbContent = false;
+                }
+
                 if ($thumbContent !== false) {
                     $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie->id . '.jpg';
 
