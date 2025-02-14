@@ -15,6 +15,8 @@ class DownloadThumbs implements ShouldQueue
 {
     use Queueable;
 
+    public $timeout = 1800;
+
     /**
      * Create a new job instance.
      */
@@ -48,12 +50,12 @@ class DownloadThumbs implements ShouldQueue
 
                 if ($thumbContent !== false) {
                     $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie->id . '.jpg';
-try {
+                    try {
 
-    ImageManager::imagick()->read($thumbContent)->scale(150)->save($tmpPath);
-}catch (\Exception $e) {
-    return;
-}
+                        ImageManager::imagick()->read($thumbContent)->scale(150)->save($tmpPath);
+                    }catch (\Exception $e) {
+                        return;
+                    }
                 }
             });
     }

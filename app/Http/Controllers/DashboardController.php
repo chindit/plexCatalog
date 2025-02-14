@@ -79,7 +79,7 @@ class DashboardController extends Controller
             (new DownloadThumbs($catalog))
                 ->chain([
                     new ProcessPdf($catalog),
-                    new CleanThumbs($catalog),
+                    //new CleanThumbs($catalog),
                 ])
         );
 
