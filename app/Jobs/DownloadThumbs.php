@@ -4,12 +4,11 @@ namespace App\Jobs;
 
 use App\Models\Catalog;
 use App\Models\Media;
-use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Vips\Driver as VipsDriver;
 
 class DownloadThumbs implements ShouldQueue
 {
@@ -30,11 +29,13 @@ class DownloadThumbs implements ShouldQueue
      */
     public function handle(): void
     {
+        $manager = ImageManager::withDriver(VipsDriver::class);
+
         $this->catalog->user->medias
             ->filter(function (Media $movie) {
                 return in_array((string)$movie->library_id, $this->catalog->options['ids']);
             })
-            ->each(function (Media $movie) {
+            ->each(function (Media $movie) use ($manager) {
                 if (file_exists($tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie->id . '.jpg'))
                 {
                     return;
@@ -51,8 +52,7 @@ class DownloadThumbs implements ShouldQueue
                 if ($thumbContent !== false) {
                     $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $movie->id . '.jpg';
                     try {
-
-                        ImageManager::imagick()->read($thumbContent)->scale(150)->save($tmpPath);
+                        $manager->read($thumbContent)->scale(300)->save($tmpPath);
                     }catch (\Exception $e) {
                         return;
                     }

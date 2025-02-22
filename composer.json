@@ -1,22 +1,22 @@
 {
-    "name": "laravel/laravel",
+    "name": "chindit/plex-catalog",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Catalog generator for Plex",
     "keywords": [
-        "framework",
-        "laravel"
+        "plex",
+        "catalog"
     ],
     "license": "MIT",
     "require": {
         "php": "^8.3",
         "ext-curl": "*",
-        "ext-imagick": "*",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
         "chindit/plex-api": "^2.0",
         "guzzlehttp/guzzle": "^7.9",
         "intervention/image": "^3.11",
+        "intervention/image-driver-vips": "^1.0",
         "kyslik/column-sortable": "^6.6",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^11.41",

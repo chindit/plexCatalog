@@ -56,7 +56,7 @@ class ProcessPdf implements ShouldQueue
             return $collator->getSortKey($movie['title']);
         });
 
-        $pageLimit = 10;
+        $pageLimit = 400;
         $pages = ceil($movies->count()/4);
         $volumes = ceil($pages/$pageLimit);
 
