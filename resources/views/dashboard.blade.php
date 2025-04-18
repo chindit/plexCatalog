@@ -21,6 +21,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+            <div class="alert alert-info fade show" role="alert">
+                If you have generated any catalog, it's listed here.<br>
+                Generating a catalog can take up to 15 min.<br>
+                A generated catalog is kept 7 days before being automatically deleted.<br/>
+                <ul>
+                    @foreach($files as $file)
+                        <li><a href="{{ $file }}">{{ $file }}</a></li>
+                    @endforeach
+                </ul>
+            </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg ">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <p>You have {{ $user->medias()->count()  }} medias (including show episodes)</p>

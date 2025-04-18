@@ -15,6 +15,9 @@ use Chindit\PlexApi\Model\Library;
 use Chindit\PlexApi\PlexServer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Vips\Driver as VipsDriver;
+use Intervention\Image\ImageManager;
 
 class DashboardController extends Controller
 {
@@ -22,7 +25,7 @@ class DashboardController extends Controller
     {
         /** @var User $user */
         $user = User::find(Auth::id());
-
+        $manager = ImageManager::withDriver(VipsDriver::class);
         $needSync = $user->last_sync?->lt(Carbon::now()->subMonth()) ?? true;
 
         return view(
@@ -34,8 +37,14 @@ class DashboardController extends Controller
                 'medias' => [
                     'formats' => Media::select(['video_codec', \DB::raw('COUNT(*) as total')])->groupBy('video_codec')->get(),
                     'audio' => Media::select(['audio_codec', \DB::raw('COUNT(*) as total')])->groupBy('audio_codec')->get(),
-                ]
-            ]
+                ],
+                'files' => collect(Storage::disk('public')->files('files'))
+                    ->filter(function ($file) use ($user) {
+                        return str_starts_with($file, 'files/' . $user->id . '_');
+                    })->map(function ($file) {
+                        Storage::url($file);
+                    })
+        ]
         );
     }
 

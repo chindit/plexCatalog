@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Browsershot\Browsershot;
 
@@ -39,7 +40,7 @@ class ProcessPdf implements ShouldQueue
             ->map(function(Media $movie) {
             return [
                 'id' => $movie->id,
-                // Title should start with an uppercase for better sorting
+                // Title should start with uppercase for better sorting
                 'title' => Str::ucfirst(StringUtils::stripPrefix($movie->title)),
                 'summary' => $movie->summary,
                 'thumb' => $movie->thumb,
@@ -104,6 +105,10 @@ class ProcessPdf implements ShouldQueue
        </div>
 ')
                 ->save($fileName);
+            $userId = auth()->id();
+            $finalFileName = "files/{$userId}_catalog_" . microtime() . ".pdf";
+            Storage::disk('public')->put($finalFileName, file_get_contents($fileName));
+            unlink($fileName);
         });
     }
 }
