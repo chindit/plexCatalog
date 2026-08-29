@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use App\Service\StringUtils;
 use App\Service\Thumbnailer;
 use Chindit\PlexApi\Enum\LibraryType;
+use Chindit\PlexApi\Exceptions\UnreachableServerException;
 use Chindit\PlexApi\Model\File;
 use Chindit\PlexApi\Model\Library;
 use Chindit\PlexApi\Model\Media;
+use Chindit\PlexApi\Model\Server;
 use Chindit\PlexApi\Model\Show;
 use Chindit\PlexApi\PlexServer;
+use Chindit\PlexApi\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 use Spatie\Browsershot\Browsershot;
+use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpFoundation\Cookie as SfCookie;
 
 class PlexController extends Controller
@@ -21,51 +26,99 @@ class PlexController extends Controller
     public function listcatalogs(Request $request)
     {
         $request->validate([
-            'serverAddress' => 'required|string',
+            'serverAddress' => 'nullable|string',
             'serverToken' => 'required|string',
             'serverPort' => 'int',
         ]);
 
-        $plexApi = new PlexServer($request->get('serverAddress'), $request->get('serverToken'), $request->get('serverPort', 32400));
+        $account = new Account(
+            $request->string('serverToken'),
+            $request->string('serverAddress'),
+            $request->integer('serverPort'),
+        );
+
+        // Save token into session
+        $request->session()->put('plexServer', [
+            's' => $request->string('serverAddress'),
+            't' => $request->string('serverToken'),
+            'p' => $request->integer('serverPort', 32400),
+        ]);
+
+        $libraries = new Collection();
+
+        foreach ($account->getServerList() as $server) {
+            /** @var Server $server */
+            try {
+                $serverLibraries = $account
+                    ->getServer($server->identifier)
+                    ->libraries();
+
+                foreach ($serverLibraries as $library) {
+                    $libraries->push([
+                        'serverId' => $server->identifier,
+                        'serverName' => $server->name,
+                        'library' => $library,
+                    ]);
+                }
+            } catch (UnreachableServerException|ClientException $throwable) {
+                continue;
+            }
+        }
 
         try {
-            $catalogs = collect($plexApi->libraries())
-                ->filter(fn(Library $library) => $library->getType() === LibraryType::Movie || $library->getType() === LibraryType::Show)
-                ->keyBy(fn(Library $library) => $library->getId())
-                ->map(fn(Library $library) => $library->getTitle());
+            $catalogs = $libraries
+                ->filter(fn(array $item) => $item['library']->getType() === LibraryType::Movie || $item['library']->getType() === LibraryType::Show)
+                ->mapWithKeys(fn(array $item) => [
+                    $item['serverId'] . ':' . $item['library']->getId() => $item['serverName'] . ' - ' . $item['library']->getTitle(),
+                ]);
         } catch (\Throwable $throwable) {
             return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
         }
 
         return response()
-            ->view('catalogs', ['catalogs' => $catalogs])
-            ->withCookie(new SfCookie('plex', json_encode(
-                [
-                    's' => $request->get('serverAddress'),
-                    't' => $request->get('serverToken'),
-                    'p' => $request->get('serverPort', 32400),
-                ],
-                JSON_THROW_ON_ERROR
-            )
-            ));
+            ->view('catalogs', ['catalogs' => $catalogs]);
     }
 
     public function generateReport(Request $request, Thumbnailer $thumbnailer)
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'integer'
+            'ids.*' => 'string'
         ]);
 
-        $server = json_decode($request->cookie('plex'), true, 10, JSON_THROW_ON_ERROR);
-
-        $plexApi = new PlexServer($server['s'], $server['t'], $server['p']);
+        $server = $request->session()->get('plexServer');
+        $account = new Account($server['t'], $server['s'], $server['p']);
+        /** @var Collection<Server> $servers */
+        $servers = collect($account->getServerList())->keyBy('identifier');
 
         $movies = collect();
 
-        foreach ($request->get('ids') as $id) {
+        foreach ($request->array('ids') as $selection) {
             try {
-                $movies = $movies->merge($plexApi->library($id, ($request->get('unwatchedOnly', false) === "true")));
+                [$serverId, $libraryId] = explode(':', $selection, 2);
+                $plexServer = $account->getServer($serverId);
+                $serverModel = $servers->firstWhere(fn($server) => $server->identifier === $serverId);
+                $connection = $serverModel?->getConnections()->filter(fn($connection) => !$connection->isLocal)->first();
+
+                if (!$connection || !ctype_digit($libraryId)) {
+                    throw new \InvalidArgumentException('Invalid server or library selection');
+                }
+
+                $serverUrl = rtrim($connection->host, '/');
+                if (parse_url($serverUrl, PHP_URL_SCHEME) === null || parse_url($serverUrl, PHP_URL_PORT) === null) {
+                    $serverUrl .= ':' . $connection->port;
+                }
+
+                foreach ($plexServer->library((int) $libraryId, ($request->get('unwatchedOnly', false) === "true")) as $movie) {
+                    $movies->push([
+                        'movie' => $movie,
+                        'server' => [
+                            's' => $serverUrl,
+                            't' => $serverModel->token,
+                            'p' => $connection->port,
+                        ],
+                    ]);
+                }
             } catch (\Throwable $throwable) {
                 return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
             }
@@ -73,10 +126,17 @@ class PlexController extends Controller
 
         $isCatalogOnly = ($request->get('htmlOnly', false) === "true");
 
-        $movies = $movies->map(function(Media|Show $movie) use ($thumbnailer, $server, $isCatalogOnly) {
+        $movies = $movies->map(function (array $item) use ($thumbnailer, $isCatalogOnly) {
+            /** @var Media|Show $movie */
+            $movie = $item['movie'];
+            $server = $item['server'];
+
             // Download thumb & resize it but only if PDF rendering is required
             if ($movie->getThumb()) {
-                $thumbnail = $server['s'] . ':' . $server['p'] . $movie->getThumb() . '?X-Plex-Token=' . $server['t'];
+                $thumbnail = $server['s']
+                    . (parse_url($server['s'], PHP_URL_PORT) === null ? ':' . $server['p'] : '')
+                    . $movie->getThumb()
+                    . '?X-Plex-Token=' . $server['t'];
                 if (!$isCatalogOnly) {
                     $thumbnail = $thumbnailer->thumbnail($thumbnail);
                 }
