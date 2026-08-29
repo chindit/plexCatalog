@@ -23,8 +23,8 @@ final class Thumbnailer
         $resizedName = tempnam(sys_get_temp_dir(), 'plex_thumb_resized_') . '.jpg';
         file_put_contents($newName, $imageContent);
 
-        $manager = new ImageManager(new Driver());
-        $manager->read($newName)->scale(width: 150)->save($resizedName);
+        $manager = ImageManager::usingDriver(Driver::class);
+        $manager->decodePath($newName)->scale(width: 150)->save($resizedName);
         unlink($newName);
 
         return $resizedName;

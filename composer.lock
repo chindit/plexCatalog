@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5abb0ecd3f232339c6ce976b6c86a652",
+    "content-hash": "d446a136e1094a066bc8a4ad6af59d6d",
     "packages": [
         {
             "name": "brick/math",
@@ -180,10 +180,16 @@
         {
             "name": "chindit/plex-api",
             "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chindit/plex-api.git",
+                "reference": "2b6d3df26a5a1e559cba9dd1569ce7755661e8be"
+            },
             "dist": {
-                "type": "path",
-                "url": "../plex-api",
-                "reference": "644fc9a3fa53fd84a0e71b8a9f8e03d2b3168e4e"
+                "type": "zip",
+                "url": "https://api.github.com/repos/chindit/plex-api/zipball/2b6d3df26a5a1e559cba9dd1569ce7755661e8be",
+                "reference": "2b6d3df26a5a1e559cba9dd1569ce7755661e8be",
+                "shasum": ""
             },
             "require": {
                 "chindit/collection": "^1.0",
@@ -201,6 +207,7 @@
                     "Chindit\\PlexApi\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-3.0-or-later"
             ],
@@ -211,10 +218,11 @@
                 }
             ],
             "description": "A simple API library to interact with a Plex server",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/chindit/plex-api/issues",
+                "source": "https://github.com/chindit/plex-api/tree/3.0.0"
+            },
+            "time": "2026-08-29T13:39:02+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -9428,7 +9436,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0",
+        "php": "^8.4",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-simplexml": "*"
