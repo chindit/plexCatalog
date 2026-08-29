@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c32bc312a91c91d989da6d5b88b7ae6",
+    "content-hash": "5abb0ecd3f232339c6ce976b6c86a652",
     "packages": [
         {
             "name": "brick/math",
@@ -136,16 +136,16 @@
         },
         {
             "name": "chindit/collection",
-            "version": "1.0.11",
+            "version": "1.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chindit/collection.git",
-                "reference": "66199c20359ea1ced993d7f61481b283c8909f0a"
+                "reference": "d5ac7a02f2db0aa9de1001e4767053a0c181bd9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chindit/collection/zipball/66199c20359ea1ced993d7f61481b283c8909f0a",
-                "reference": "66199c20359ea1ced993d7f61481b283c8909f0a",
+                "url": "https://api.github.com/repos/chindit/collection/zipball/d5ac7a02f2db0aa9de1001e4767053a0c181bd9b",
+                "reference": "d5ac7a02f2db0aa9de1001e4767053a0c181bd9b",
                 "shasum": ""
             },
             "require": {
@@ -173,33 +173,27 @@
             "description": "Small array wrapper to ease array handling",
             "support": {
                 "issues": "https://github.com/chindit/collection/issues",
-                "source": "https://github.com/chindit/collection/tree/1.0.11"
+                "source": "https://github.com/chindit/collection/tree/1.0.12"
             },
-            "time": "2026-08-22T07:46:25+00:00"
+            "time": "2026-08-29T10:01:06+00:00"
         },
         {
             "name": "chindit/plex-api",
-            "version": "2.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/chindit/plex-api.git",
-                "reference": "644fc9a3fa53fd84a0e71b8a9f8e03d2b3168e4e"
-            },
+            "version": "3.0.0",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/chindit/plex-api/zipball/644fc9a3fa53fd84a0e71b8a9f8e03d2b3168e4e",
-                "reference": "644fc9a3fa53fd84a0e71b8a9f8e03d2b3168e4e",
-                "shasum": ""
+                "type": "path",
+                "url": "../plex-api",
+                "reference": "644fc9a3fa53fd84a0e71b8a9f8e03d2b3168e4e"
             },
             "require": {
                 "chindit/collection": "^1.0",
                 "ext-simplexml": "*",
                 "php": "^8.4",
-                "symfony/http-client": "^8.0"
+                "symfony/http-client": "^8.1"
             },
             "require-dev": {
-                "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^12.5"
+                "phpstan/phpstan": "^2.2",
+                "phpunit/phpunit": "^13.3"
             },
             "type": "library",
             "autoload": {
@@ -217,11 +211,10 @@
                 }
             ],
             "description": "A simple API library to interact with a Plex server",
-            "support": {
-                "source": "https://github.com/chindit/plex-api/tree/2.1.4",
-                "issues": "https://github.com/chindit/plex-api/issues"
-            },
-            "time": "2026-01-11T14:06:29+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1213,16 +1206,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "4.3.1",
+            "version": "4.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "3fd8ac3da6410d4de873be7be665f8ce8e6aeec5"
+                "reference": "bc15ed24bb88dc58f921daf78091a019ce42fe2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/3fd8ac3da6410d4de873be7be665f8ce8e6aeec5",
-                "reference": "3fd8ac3da6410d4de873be7be665f8ce8e6aeec5",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/bc15ed24bb88dc58f921daf78091a019ce42fe2c",
+                "reference": "bc15ed24bb88dc58f921daf78091a019ce42fe2c",
                 "shasum": ""
             },
             "require": {
@@ -1269,7 +1262,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/4.3.1"
+                "source": "https://github.com/Intervention/image/tree/4.3.2"
             },
             "funding": [
                 {
@@ -1285,7 +1278,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-08-24T13:23:45+00:00"
+            "time": "2026-08-29T05:35:03+00:00"
         },
         {
             "name": "laravel/framework",
@@ -7669,16 +7662,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.3.1",
+            "version": "13.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fc024931d6ad047404e9d86536735923fe63a06b"
+                "reference": "22104a5ceb8d642e6b30ab00211d53d88e2db368"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fc024931d6ad047404e9d86536735923fe63a06b",
-                "reference": "fc024931d6ad047404e9d86536735923fe63a06b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/22104a5ceb8d642e6b30ab00211d53d88e2db368",
+                "reference": "22104a5ceb8d642e6b30ab00211d53d88e2db368",
                 "shasum": ""
             },
             "require": {
@@ -7692,8 +7685,8 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.4.1",
-                "phpunit/php-code-coverage": "^14.3",
-                "phpunit/php-file-iterator": "^7.0.1",
+                "phpunit/php-code-coverage": "^14.3.1",
+                "phpunit/php-file-iterator": "^7.0.2",
                 "phpunit/php-invoker": "^7.0.0",
                 "phpunit/php-text-template": "^6.0.0",
                 "phpunit/php-timer": "^9.0.0",
@@ -7749,7 +7742,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.3.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.3.2"
             },
             "funding": [
                 {
@@ -7757,7 +7750,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-08-13T13:14:23+00:00"
+            "time": "2026-08-27T08:40:49+00:00"
         },
         {
             "name": "sebastian/cli-parser",

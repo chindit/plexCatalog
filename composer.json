@@ -8,11 +8,11 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^8.4",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
-        "chindit/plex-api": "^2.1",
+        "chindit/plex-api": "^3.0",
         "guzzlehttp/guzzle": "^8.1.0",
         "intervention/image": "^4.3",
         "laravel/framework": "^13.29",
@@ -29,8 +29,11 @@
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/chindit/plex-api"
+            "type": "path",
+            "url": "../plex-api",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "autoload": {
