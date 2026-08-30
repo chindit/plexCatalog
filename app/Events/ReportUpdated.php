@@ -4,18 +4,18 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReportUpdated implements ShouldBroadcast
+class ReportUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
         public string $channelToken,
         public string $message,
+        public ?string $reportUrl = null,
     )
     {
     }
@@ -28,7 +28,7 @@ class ReportUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('reports.' . $this->channelToken),
+            new Channel('reports.' . $this->channelToken),
         ];
     }
 

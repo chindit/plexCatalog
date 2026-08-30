@@ -11,19 +11,33 @@ window.Echo = new Echo({
     wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
-    authEndpoint: '/broadcasting/auth',
-    auth: {
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-            'Accept': 'application/json',
-        },
-    },
 });
 
 if (window.reportChannelToken) {
     window.Echo
-        .private(`reports.${window.reportChannelToken}`)
+        .channel(`reports.${window.reportChannelToken}`)
         .listen('.report.updated', (event) => {
             console.log('Report update:', event.message);
+
+            const status = document.getElementById('report-status');
+            if (status) {
+                status.className = event.reportUrl
+                    ? 'alert alert-success'
+                    : 'alert alert-info';
+                status.textContent = event.message;
+            }
+
+            if (event.reportUrl) {
+                console.log('Report URL:', event.reportUrl);
+
+                if (status) {
+                    const link = document.createElement('a');
+                    link.href = event.reportUrl;
+                    link.textContent = ' Download the report';
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    status.appendChild(link);
+                }
+            }
         });
 }

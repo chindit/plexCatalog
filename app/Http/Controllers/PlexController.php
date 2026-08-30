@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\StringUtils;
-use App\Service\Thumbnailer;
+use App\Jobs\FetchMedias;
+use App\Jobs\ProcessImages;
 use Chindit\PlexApi\Enum\LibraryType;
 use Chindit\PlexApi\Exceptions\UnreachableServerException;
-use Chindit\PlexApi\Model\File;
 use Chindit\PlexApi\Model\Library;
-use Chindit\PlexApi\Model\Media;
 use Chindit\PlexApi\Model\Server;
-use Chindit\PlexApi\Model\Show;
-use Chindit\PlexApi\PlexServer;
 use Chindit\PlexApi\Account;
+use App\Jobs\GenerateReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
-use Spatie\Browsershot\Browsershot;
 use Symfony\Component\HttpClient\Exception\ClientException;
-use Symfony\Component\HttpFoundation\Cookie as SfCookie;
 
 class PlexController extends Controller
 {
@@ -85,7 +82,7 @@ class PlexController extends Controller
             ]);
     }
 
-    public function generateReport(Request $request, Thumbnailer $thumbnailer)
+    public function generateReport(Request $request)
     {
         $request->validate([
             'ids' => 'required|array',
@@ -93,110 +90,62 @@ class PlexController extends Controller
         ]);
 
         $server = $request->session()->get('plexServer');
-        $account = new Account($server['t'], $server['s'], $server['p']);
-        /** @var Collection<Server> $servers */
-        $servers = collect($account->getServerList())->keyBy('identifier');
 
-        $movies = collect();
+        $channelToken = $request->session()->get('report_channel_token');
+        $htmlOnly = $request->boolean('htmlOnly');
+        $truncateDescription = $request->boolean('truncateDescription');
 
-        foreach ($request->array('ids') as $selection) {
-            try {
-                [$serverId, $libraryId] = explode(':', $selection, 2);
-                $plexServer = $account->getServer($serverId);
-                $serverModel = $servers->firstWhere(fn($server) => $server->identifier === $serverId);
-                $connection = $serverModel?->getConnections()->filter(fn($connection) => !$connection->isLocal)->first();
+        $fetchMediasJob = new FetchMedias(
+            $request->session()->get('report_channel_token'),
+            $request->array('ids'),
+            $server['t'],
+            $server['s'],
+            $server['p'],
+            $request->boolean('unwatchedOnly')
+        );
 
-                if (!$connection || !ctype_digit($libraryId)) {
-                    throw new \InvalidArgumentException('Invalid server or library selection');
-                }
+        $processImagesJob = new ProcessImages(
+            $channelToken,
+            $htmlOnly,
+        );
 
-                $serverUrl = rtrim($connection->host, '/');
-                if (parse_url($serverUrl, PHP_URL_SCHEME) === null || parse_url($serverUrl, PHP_URL_PORT) === null) {
-                    $serverUrl .= ':' . $connection->port;
-                }
+        $generateReportJob = new GenerateReport($channelToken, $htmlOnly, $truncateDescription);
 
-                foreach ($plexServer->library((int) $libraryId, ($request->get('unwatchedOnly', false) === "true")) as $movie) {
-                    $movies->push([
-                        'movie' => $movie,
-                        'server' => [
-                            's' => $serverUrl,
-                            't' => $serverModel->token,
-                            'p' => $connection->port,
-                        ],
-                    ]);
-                }
-            } catch (\Throwable $throwable) {
-                return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
-            }
+        Bus::chain([
+            $fetchMediasJob,
+            $processImagesJob,
+            $generateReportJob
+        ])->dispatch();
+
+        return response()->json([
+            'status' => 'queued',
+            'channelToken' => $channelToken,
+        ], 202);
+    }
+
+    public function downloadReport(Request $request, string $token)
+    {
+        abort_unless(
+            hash_equals((string) $request->session()->get('report_channel_token', ''), $token),
+            403,
+        );
+
+        $disk = Storage::disk('local');
+        $pdfPath = "reports/{$token}.pdf";
+        $htmlPath = "reports/{$token}.html";
+
+        if ($disk->exists($pdfPath)) {
+            return response()->download($disk->path($pdfPath), 'catalog.pdf');
         }
 
-        $isCatalogOnly = ($request->get('htmlOnly', false) === "true");
-
-        $movies = $movies->map(function (array $item) use ($thumbnailer, $isCatalogOnly) {
-            /** @var Media|Show $movie */
-            $movie = $item['movie'];
-            $server = $item['server'];
-
-            // Download thumb & resize it but only if PDF rendering is required
-            if ($movie->getThumb()) {
-                $thumbnail = $server['s']
-                    . (parse_url($server['s'], PHP_URL_PORT) === null ? ':' . $server['p'] : '')
-                    . $movie->getThumb()
-                    . '?X-Plex-Token=' . $server['t'];
-                if (!$isCatalogOnly) {
-                    $thumbnail = $thumbnailer->thumbnail($thumbnail);
-                }
-            } else {
-                $thumbnail = '';
-            }
-
-            return [
-                // Title should start with an uppercase for better sorting
-                'title' => ucfirst(StringUtils::stripPrefix($movie->getTitle())),
-                'summary' => $movie->getSummary(),
-                'thumb' => $thumbnail,
-                'duration' => round($movie->getDuration() / 60),
-                'year' => $movie->getYear(),
-                'quality' => in_array(File::class, class_uses_recursive($movie), true) ? ($movie->getResolution() > 10 ? $movie->getResolution() . 'p' : ($movie->getResolution() === 4 ? '4k' : '')) : '',
-                'actors' => implode(', ', $movie->getActors()),
-                'genres' => implode(', ', $movie->getGenres()),
-            ];
-        });
-
-        $movies = $movies->sortBy(function (array $movie) {
-            return Str::ascii($movie['title']);
-        });
-
-        $catalog = view('templates/catalog', [
-            'server' => $server['s'],
-            'token' => $server['t'],
-            'port' => $server['p'],
-            'movies' => $movies,
-            'truncateDescription' => $request->get('truncateDescription', false) === "true",
-            'htmlOnly' => $request->get('htmlOnly', false) === "true",
-        ])->render();
-
-        if ($isCatalogOnly)
-        {
-            return $catalog;
+        if ($disk->exists($htmlPath)) {
+            return response()->download(
+                $disk->path($htmlPath),
+                'catalog.html',
+                ['Content-Type' => 'text/html; charset=UTF-8'],
+            );
         }
 
-        try {
-            $fileName = tempnam(sys_get_temp_dir(), 'plex_') . '.pdf';
-            Browsershot::html($catalog)
-                ->noSandbox()
-                ->newHeadless()
-                ->format('A4')
-                ->timeout(3000)
-                ->margins(25, 0, 15, 0)
-                ->showBrowserHeaderAndFooter()
-                ->hideHeader()
-                ->footerHtml('<div style="text-align: right;width: 297mm;font-size: 8px;"><span style="margin-right: 1cm"><span class="pageNumber"></span>/<span class="totalPages"></span></span></div>')
-                ->save($fileName);
-
-            return response()->download($fileName, 'catalog.pdf');
-        } catch (\Throwable $throwable) {
-            return response()->redirectTo('/')->withErrors(new MessageBag(['serverAddress' => $throwable->getMessage()]));
-        }
+        abort(404);
     }
 }

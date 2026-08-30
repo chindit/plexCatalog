@@ -6,7 +6,6 @@ namespace App\Service;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpClient\Exception\ClientException;
-use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\HttpClient;
 
 final class Thumbnailer
@@ -14,7 +13,11 @@ final class Thumbnailer
     public function thumbnail(string $url): string
     {
         try {
-            $imageContent = HttpClient::create(['verify_host' => false])->request('GET', $url)->getContent();
+            $imageContent = HttpClient::create([
+                'verify_host' => false,
+                'timeout' => 5,
+                'max_duration' => 5,
+            ])->request('GET', $url)->getContent();
         } catch (ClientException $exception) {
             return '';
         }
