@@ -44,6 +44,9 @@ class PlexController extends Controller
             'p' => $request->integer('serverPort', 32400),
         ]);
 
+        $channelToken = Str::random(40);
+        $request->session()->put('report_channel_token', $channelToken);
+
         $libraries = new Collection();
 
         foreach ($account->getServerList() as $server) {
@@ -76,7 +79,10 @@ class PlexController extends Controller
         }
 
         return response()
-            ->view('catalogs', ['catalogs' => $catalogs]);
+            ->view('catalogs', [
+                'catalogs' => $catalogs,
+                'channelToken' => $channelToken,
+            ]);
     }
 
     public function generateReport(Request $request, Thumbnailer $thumbnailer)

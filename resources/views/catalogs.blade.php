@@ -1,6 +1,10 @@
 @extends('base')
 
 @section('content')
+    <script>
+        window.reportChannelToken = @json($channelToken);
+    </script>
+
     <h3>List of available catalogs</h3>
 
     @if ($errors->any())
