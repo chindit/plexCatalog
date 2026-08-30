@@ -13,9 +13,10 @@
         "ext-json": "*",
         "ext-simplexml": "*",
         "chindit/plex-api": "^3.0",
-        "guzzlehttp/guzzle": "^8.1.0",
+        "guzzlehttp/guzzle": "^7.8",
         "intervention/image": "^4.3",
         "laravel/framework": "^13.29",
+        "laravel/reverb": "^1.11",
         "laravel/tinker": "^3.0",
         "spatie/browsershot": "^5.4"
     },
