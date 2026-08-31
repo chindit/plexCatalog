@@ -21,7 +21,7 @@ if (window.reportChannelToken) {
 
             const status = document.getElementById('report-status');
             if (status) {
-                status.className = event.reportUrl
+                status.closest('.alert').className = event.reportUrl
                     ? 'alert alert-success'
                     : 'alert alert-info';
                 status.textContent = event.message;

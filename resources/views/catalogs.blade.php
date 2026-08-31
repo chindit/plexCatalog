@@ -84,9 +84,10 @@
             const form = event.currentTarget;
             const submit = document.getElementById('report-submit');
             const status = document.getElementById('report-status');
+            const banner = status.closest('.alert');
 
             submit.disabled = true;
-            status.className = 'alert alert-info';
+            banner.className = 'alert alert-info';
             status.textContent = 'Report queued...';
 
             try {
@@ -106,7 +107,7 @@
                 status.textContent = 'Report queued. Waiting for updates...';
             } catch (error) {
                 submit.disabled = false;
-                status.className = 'alert alert-danger';
+                banner.className = 'alert alert-danger';
                 status.textContent = `Unable to queue report: ${error.message}`;
             }
         });
