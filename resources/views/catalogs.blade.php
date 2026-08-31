@@ -1,6 +1,17 @@
 @extends('base')
 
 @section('content')
+    <style>
+        .loader {
+            display: inline-block;
+            animation: loader-spin 1s linear infinite;
+        }
+
+        @keyframes loader-spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
     <script>
         window.reportChannelToken = @json($channelToken);
     </script>
@@ -22,7 +33,10 @@
     </div>
 
     <p>Please check catalogs you want to include in your report</p>
-    <div id="report-status" class="alert alert-secondary d-none" role="status"></div>
+    <div class="alert alert-secondary d-none" role="status">
+        <span class="loader">⏳</span>
+        <span id="report-status"></span>
+    </div>
 
     <form id="report-form" method="POST" action="{{ route('report') }}">
             @foreach($catalogs as $id => $name)

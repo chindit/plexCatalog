@@ -23,7 +23,6 @@ class GenerateReport implements ShouldQueue
         private readonly bool $truncateDescription = false,
     )
     {
-        //
     }
 
     /**
@@ -44,8 +43,6 @@ class GenerateReport implements ShouldQueue
             throw new \RuntimeException("Invalid processed media file: {$path}");
         }
 
-        // Make the generated HTML self-contained. Browser clients cannot read
-        // the worker's local filesystem after downloading the HTML file.
         $movies = array_map(function (array $movie): array {
             if ($movie['thumb'] !== '' && is_file($movie['thumb'])) {
                 $content = file_get_contents($movie['thumb']);
