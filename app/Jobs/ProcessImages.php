@@ -65,22 +65,20 @@ class ProcessImages implements ShouldQueue
                     . $movie->getThumb()
                     . '?X-Plex-Token=' . $server['t'];
 
-                if (!$this->htmlOnly) {
-                    $imagePath = "reports/{$this->channelToken}/images/{$index}.jpg";
+                $imagePath = "reports/{$this->channelToken}/images/{$index}.jpg";
 
-                    if ($disk->exists($imagePath)) {
-                        // On a retry, an existing image is already complete.
+                if ($disk->exists($imagePath)) {
+                    // On a retry, an existing image is already complete.
+                    $thumbnail = $disk->path($imagePath);
+                } else {
+                    $temporaryPath = $thumbnailer->thumbnail($thumbnail, $this->channelToken);
+
+                    if ($temporaryPath !== '') {
+                        $disk->put($imagePath, file_get_contents($temporaryPath));
+                        unlink($temporaryPath);
                         $thumbnail = $disk->path($imagePath);
                     } else {
-                        $temporaryPath = $thumbnailer->thumbnail($thumbnail, $this->channelToken);
-
-                        if ($temporaryPath !== '') {
-                            $disk->put($imagePath, file_get_contents($temporaryPath));
-                            unlink($temporaryPath);
-                            $thumbnail = $disk->path($imagePath);
-                        } else {
-                            $thumbnail = '';
-                        }
+                        $thumbnail = '';
                     }
                 }
             }
