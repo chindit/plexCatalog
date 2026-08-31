@@ -51,6 +51,10 @@ class ProcessImages implements ShouldQueue
         $processed = [];
 
         foreach ($items as $index => $item) {
+            if ($index % 5 === 0) {
+                ReportUpdated::dispatch($this->channelToken, 'Image processing: ' . ($index + 1) . '/' . count($items));
+            }
+
             $movie = $item['movie'];
             $server = $item['server'];
 
