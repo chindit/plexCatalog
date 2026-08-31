@@ -18,5 +18,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// The catalog endpoint receives Plex credentials, so generation remains POST-only.
+// Redirect direct visits or browser refreshes back to the form instead of returning
+// a method-not-allowed error.
 Route::post('/catalog', [PlexController::class, 'listCatalogs'])->name('catalog');
 Route::post('/report', [PlexController::class, 'generateReport'])->name('report');
+Route::get('/reports/{token}', [PlexController::class, 'downloadReport'])->name('report.download');

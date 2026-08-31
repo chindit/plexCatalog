@@ -1,6 +1,10 @@
 @extends('base')
 
 @section('content')
+    <script>
+        window.reportChannelToken = @json($channelToken);
+    </script>
+
     <h3>List of available catalogs</h3>
 
     @if ($errors->any())
@@ -18,7 +22,9 @@
     </div>
 
     <p>Please check catalogs you want to include in your report</p>
-    <form method="POST" action="{{ route('report') }}">
+    <div id="report-status" class="alert alert-secondary d-none" role="status"></div>
+
+    <form id="report-form" method="POST" action="{{ route('report') }}">
             @foreach($catalogs as $id => $name)
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="{{ $id }}" id="checkbox-{{ $id }}" name="ids[]">
@@ -52,8 +58,43 @@
             If you do not want to wait, clone the project and run it on your own machine.
         </div>
         <div class="mb-3">
-            <input type="submit" class="btn btn-primary" value="Generate report" />
+            <input id="report-submit" type="submit" class="btn btn-primary" value="Generate report" />
         </div>
         @csrf
     </form>
+
+    <script>
+        document.getElementById('report-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.currentTarget;
+            const submit = document.getElementById('report-submit');
+            const status = document.getElementById('report-status');
+
+            submit.disabled = true;
+            status.className = 'alert alert-info';
+            status.textContent = 'Report queued...';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
+                status.textContent = 'Report queued. Waiting for updates...';
+            } catch (error) {
+                submit.disabled = false;
+                status.className = 'alert alert-danger';
+                status.textContent = `Unable to queue report: ${error.message}`;
+            }
+        });
+    </script>
 @endsection
