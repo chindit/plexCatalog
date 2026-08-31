@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CleanFiles;
 use App\Jobs\FetchMedias;
 use App\Jobs\ProcessImages;
+use Carbon\Carbon;
 use Chindit\PlexApi\Enum\LibraryType;
 use Chindit\PlexApi\Exceptions\UnreachableServerException;
 use Chindit\PlexApi\Model\Library;
@@ -110,11 +112,13 @@ class PlexController extends Controller
         );
 
         $generateReportJob = new GenerateReport($channelToken, $htmlOnly, $truncateDescription);
+        $cleanJob = new CleanFiles($channelToken);
 
         Bus::chain([
             $fetchMediasJob,
             $processImagesJob,
-            $generateReportJob
+            $generateReportJob,
+            $cleanJob->delay(Carbon::now()->addMinutes(30)),
         ])->dispatch();
 
         return response()->json([

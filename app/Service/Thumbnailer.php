@@ -10,7 +10,7 @@ use Symfony\Component\HttpClient\HttpClient;
 
 final class Thumbnailer
 {
-    public function thumbnail(string $url): string
+    public function thumbnail(string $url, ?string $identifier = null): string
     {
         try {
             $imageContent = HttpClient::create([
@@ -22,8 +22,9 @@ final class Thumbnailer
             return '';
         }
 
-        $newName = tempnam(sys_get_temp_dir(), 'plex_thumb_') . '.jpg';
-        $resizedName = tempnam(sys_get_temp_dir(), 'plex_thumb_resized_') . '.jpg';
+        $temporaryPrefix = $identifier === null ? 'plex_thumb_' : "plex_{$identifier}_";
+        $newName = tempnam(sys_get_temp_dir(), $temporaryPrefix) . '.jpg';
+        $resizedName = tempnam(sys_get_temp_dir(), $temporaryPrefix) . '.jpg';
         file_put_contents($newName, $imageContent);
 
         $manager = ImageManager::usingDriver(Driver::class);

@@ -72,7 +72,7 @@ class ProcessImages implements ShouldQueue
                         // On a retry, an existing image is already complete.
                         $thumbnail = $disk->path($imagePath);
                     } else {
-                        $temporaryPath = $thumbnailer->thumbnail($thumbnail);
+                        $temporaryPath = $thumbnailer->thumbnail($thumbnail, $this->channelToken);
 
                         if ($temporaryPath !== '') {
                             $disk->put($imagePath, file_get_contents($temporaryPath));
