@@ -16,6 +16,7 @@ class ProcessImages implements ShouldQueue
 
     public int $tries = 3;
     public int $backoff = 5;
+    public int $timeout = 3600;
 
     /**
      * Create a new job instance.
@@ -49,12 +50,9 @@ class ProcessImages implements ShouldQueue
 
         $disk = Storage::disk('local');
         $processed = [];
+        $processedCount = 0;
 
         foreach ($items as $index => $item) {
-            if ($index % 5 === 0) {
-                ReportUpdated::dispatch($this->channelToken, 'Image processing: ' . ($index + 1) . '/' . count($items));
-            }
-
             $movie = $item['movie'];
             $server = $item['server'];
 
@@ -96,6 +94,13 @@ class ProcessImages implements ShouldQueue
                 'genres' => implode(', ', $movie->getGenres()),
             ];
 
+            $processedCount++;
+            if ($processedCount % 5 === 0 || $processedCount === count($items)) {
+                ReportUpdated::dispatch(
+                    $this->channelToken,
+                    'Image processing: ' . $processedCount . '/' . count($items),
+                );
+            }
         }
 
         $movies = collect($processed)->sortBy('title')->values()->all();
